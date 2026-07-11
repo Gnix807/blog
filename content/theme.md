@@ -11,7 +11,7 @@ aside: [toc, meta-aside-github]
 :::link-card
 ---
 title: L33Z22L11/blog-v3
-description: My blog, powered by Nuxt 4 & Nuxt Content v3. 纸鹿摸鱼处，分享技术与生活。
+description: 本站使用的博客主题，基于 Nuxt 4 & Nuxt Content v3 构建。
 link: https://github.com/L33Z22L11/blog-v3
 ---
 :::
