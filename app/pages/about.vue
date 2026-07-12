@@ -11,7 +11,7 @@ const age = new Date().getFullYear() - birthYear
 const contacts = [
 	{ icon: 'tabler:brand-github', text: 'Gnix807', url: 'https://github.com/Gnix807' },
 	{ icon: 'tabler:brand-bilibili', text: 'Bilibili', url: 'https://space.bilibili.com/96621291' },
-	{ icon: 'ri:qq-line', text: '群 203690967', url: 'https://qun.qq.com/' },
+	{ icon: 'ri:qq-line', text: '群 203690967', url: 'https://qm.qq.com/q/Msi2AbGtWw' },
 	{ icon: 'tabler:mail', text: appConfig.author.email, url: `mailto:${appConfig.author.email}` },
 ]
 

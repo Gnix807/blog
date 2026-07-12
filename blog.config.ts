@@ -7,7 +7,7 @@ const basicConfig = {
 	description: '倪谅的个人博客「倪哥买提大巴扎」，分享技术与生活。深海般的生活，是我心里的华北浪革。这里记录编程开发、安全、思考与日常生活的点滴经历，充满启发与思考。网站界面简洁美观，内容丰富实用，涵盖编程、生活、学习等多个领域，为读者提供舒适的阅读体验。',
 	author: {
 		name: '倪谅',
-		avatar: '/avatar.jpg',
+		avatar: 'https://img.gnix807.cn/%E6%90%9C%E5%9B%BE%E7%A5%9E%E5%99%A8_1783102761644.jpg',
 		email: 'Gnix807@gmail.com',
 		homepage: 'https://term.gnix807.top/',
 	},

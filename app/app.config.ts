@@ -69,7 +69,7 @@ export default defineAppConfig({
 			{ icon: 'tabler:home', text: '个人主页', url: blogConfig.author.homepage },
 			{ icon: 'tabler:brand-github', text: 'GitHub: Gnix807', url: 'https://github.com/Gnix807' },
 			{ icon: 'tabler:brand-bilibili', text: 'Bilibili 主页', url: 'https://space.bilibili.com/96621291' },
-			{ icon: 'ri:qq-line', text: 'QQ群: 203690967', url: 'https://qun.qq.com/' },
+			{ icon: 'ri:qq-line', text: 'QQ群: 203690967', url: 'https://qm.qq.com/q/Msi2AbGtWw' },
 			{ icon: 'tabler:rss', text: 'Atom订阅', url: '/atom.xml' },
 		] satisfies NavItem[],
 		/** 页脚站点地图 */
@@ -85,7 +85,7 @@ export default defineAppConfig({
 				items: [
 					{ icon: 'tabler:brand-github', text: 'Gnix807', url: 'https://github.com/Gnix807' },
 					{ icon: 'tabler:brand-bilibili', text: 'Bilibili', url: 'https://space.bilibili.com/96621291' },
-					{ icon: 'ri:qq-line', text: '群: 203690967', url: 'https://qun.qq.com/' },
+					{ icon: 'ri:qq-line', text: '群: 203690967', url: 'https://qm.qq.com/q/Msi2AbGtWw' },
 					{ icon: 'tabler:mail', text: blogConfig.author.email, url: `mailto:${blogConfig.author.email}` },
 				],
 			},
