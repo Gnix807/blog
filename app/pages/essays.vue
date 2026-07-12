@@ -56,11 +56,12 @@ function formatContent(text: string) {
 				class="talk-images"
 				:class="`count-${item.images.length}`"
 			>
-				<ContentPic
+				<UtilImg
 					v-for="(img, i) in item.images"
 					:key="i"
 					class="talk-image"
 					:src="img"
+					:alt="`图片${i + 1}`"
 				/>
 			</div>
 
@@ -152,18 +153,10 @@ function formatContent(text: string) {
 	}
 
 	.talk-image {
-		margin: 0;
-
-		:deep(figure.image) {
-			margin: 0;
-		}
-
-		:deep(img) {
-			width: 100%;
-			aspect-ratio: 1;
-			border-radius: 0.4rem;
-			object-fit: cover;
-		}
+		width: 100%;
+		aspect-ratio: 1;
+		border-radius: 0.4rem;
+		object-fit: cover;
 	}
 }
 
