@@ -13,6 +13,18 @@ export default [
 		entries: [
 			myFeed,
 			{
+				author: '倪谅',
+				sitenick: '主站',
+				title: '倪哥买提大巴扎（主站）',
+				desc: '烤肉 man 的日常',
+				link: 'https://www.gnix807.cn',
+				feed: 'https://www.gnix807.cn/rss.xml',
+				icon: 'https://img.gnix807.cn/Logo_small.jpeg',
+				avatar: 'https://img.gnix807.cn/Logo_small.jpeg',
+				date: '2026-07-12',
+				comment: '这是我的另一个站。',
+			},
+			{
 				author: '林间拾语',
 				desc: '技术与生活的温暖拾遗',
 				link: 'https://www.xhhao.com',
