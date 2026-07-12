@@ -10,8 +10,9 @@ useSeoMeta({
 interface SteamGame {
 	appid: number
 	name: string
-	playtime_forever: number
-	playtime_2weeks?: number
+	playtimeForever: number
+	playtime2Weeks?: number
+	headerImage?: string
 }
 
 const games = ref<SteamGame[]>([])
@@ -19,14 +20,27 @@ const loading = ref(true)
 const failed = ref(false)
 const sort = ref<'total' | 'recent'>('total')
 
+// 兼容多种后端返回格式：
+// - Halo Steam 插件 /games：{ items: [{ appId, name, playtimeForever, headerImageUrl, playtime2Weeks }] }
+// - 原始 Steam GetOwnedGames：{ response: { games: [{ appid, name, playtime_forever, playtime_2weeks }] } }
+function normalize(raw: any): SteamGame[] {
+	const arr = raw?.items ?? raw?.response?.games ?? raw?.games ?? raw?.data ?? []
+	return arr.map((g: any) => ({
+		appid: g.appId ?? g.appid,
+		name: g.name,
+		playtimeForever: g.playtimeForever ?? g.playtime_forever ?? 0,
+		playtime2Weeks: g.playtime2Weeks ?? g.playtime_2weeks,
+		headerImage: g.headerImageUrl ?? g.realHeaderImage ?? undefined,
+	}))
+}
+
 onMounted(async () => {
 	if (!appConfig.steamApi) {
 		loading.value = false
 		return
 	}
 	try {
-		const raw = await $fetch<any>(appConfig.steamApi)
-		games.value = raw?.response?.games ?? raw?.games ?? raw?.data ?? []
+		games.value = normalize(await $fetch<any>(appConfig.steamApi))
 	}
 	catch {
 		failed.value = true
@@ -37,20 +51,20 @@ onMounted(async () => {
 })
 
 const totalHours = computed(() =>
-	Math.round(games.value.reduce((sum, g) => sum + (g.playtime_forever ?? 0), 0) / 60),
+	Math.round(games.value.reduce((sum, g) => sum + (g.playtimeForever ?? 0), 0) / 60),
 )
 
 const sortedGames = computed(() => sort.value === 'recent'
-	? orderBy(games.value.filter(g => g.playtime_2weeks), ['playtime_2weeks'], ['desc'])
-	: orderBy(games.value, ['playtime_forever'], ['desc']),
+	? orderBy(games.value.filter(g => g.playtime2Weeks), ['playtime2Weeks'], ['desc'])
+	: orderBy(games.value, ['playtimeForever'], ['desc']),
 )
 
 function hours(minutes?: number) {
 	return ((minutes ?? 0) / 60).toFixed(1)
 }
 
-function capsule(appid: number) {
-	return `https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/header.jpg`
+function capsule(game: SteamGame) {
+	return game.headerImage || `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`
 }
 </script>
 
@@ -73,11 +87,12 @@ function capsule(appid: number) {
 	<div v-else-if="!appConfig.steamApi" class="game-hint card">
 		<Icon name="tabler:brand-steam" />
 		<p>
-			展示 Steam 游戏库需要一个后端代理接口（Steam Web API 有密钥与跨域限制，不能前端直连）。
-			部署一个 Steam 代理（如
-			<a href="https://github.com/PaloMiku/Steam_Profile_API_Server" target="_blank" rel="noopener">Steam_Profile_API_Server</a>
-			之类，返回 <code>IPlayerService/GetOwnedGames</code> 格式 JSON），把地址填入
-			<code>app.config.ts</code> 的 <code>steamApi</code> 即可。
+			展示 Steam 游戏库需要一个后端接口（Steam Web API 有密钥与跨域限制，不能前端直连）。推荐两种方式：
+			① 在 1Panel 装一个 Halo 跑
+			<a href="https://github.com/Tim0x0/halo-plugin-steam" target="_blank" rel="noopener">halo-plugin-steam</a>
+			插件，用其 <code>/apis/api.steam.timxs.com/v1alpha1/games</code> 接口；
+			② 自建 Steam 代理返回 <code>GetOwnedGames</code> 格式 JSON。
+			任选其一，把地址填入 <code>app.config.ts</code> 的 <code>steamApi</code> 即可。
 		</p>
 	</div>
 
@@ -108,15 +123,15 @@ function capsule(appid: number) {
 				class="game-card card"
 				:title="game.name"
 			>
-				<UtilImg class="game-cover" :src="capsule(game.appid)" :alt="game.name" />
+				<UtilImg class="game-cover" :src="capsule(game)" :alt="game.name" />
 				<div class="game-info">
 					<div class="game-name">
 						{{ game.name }}
 					</div>
 					<div class="game-time">
-						<span><Icon name="tabler:clock" />{{ hours(game.playtime_forever) }} h</span>
-						<span v-if="game.playtime_2weeks" class="recent">
-							近两周 {{ hours(game.playtime_2weeks) }} h
+						<span><Icon name="tabler:clock" />{{ hours(game.playtimeForever) }} h</span>
+						<span v-if="game.playtime2Weeks" class="recent">
+							近两周 {{ hours(game.playtime2Weeks) }} h
 						</span>
 					</div>
 				</div>
