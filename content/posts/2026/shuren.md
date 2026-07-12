@@ -5,7 +5,7 @@ date: 2026-05-28 00:00:00
 updated: 2026-05-28 00:00:00
 image:
 type: story
-categories: [生活]
+categories: [小说]
 tags: [短篇, 乡土]
 references:
   - title: 在线查看原网页

@@ -1,6 +1,14 @@
+@font-face {
+	font-family: "XiangcuiDengcusong";
+	font-style: normal;
+	font-weight: 400 900;
+	font-display: swap;
+	src: url("https://img.gnix807.cn/XiangcuiDengcusong.ttf") format("truetype");
+}
+
 :root {
 	--font-basic: "MiSans Latin VF", /* Android/Linux */ "sans-serif", /* Firefox */ "Noto Sans SC", sans-serif;
-	--font-serif: /* Windows */ "Noto Serif SC-Local", "Noto Serif SC", serif;
+	--font-serif: "XiangcuiDengcusong", /* Windows */ "Noto Serif SC-Local", "Noto Serif SC", serif;
 	--font-creative: "Montserrat", "InterVariable", sans-serif;
 	--font-stroke-free: "Barlow Condensed", "Montserrat", "Inter", /* macOS */ "Lantinghei SC", /* Windows */ "Microsoft YaHei", sans-serif;
 	--font-monospace: "JetBrains Mono", /* Android/Linux */ "monospace", /* Windows */ "Cascadia Code", /* Windows */ "Consolas", /* Apple */ "Monaco", var(--font-basic), monospace;
