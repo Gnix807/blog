@@ -120,8 +120,10 @@ export default defineAppConfig({
 			title: '',
 			items: [
 				{ icon: 'tabler:files', text: '文章', url: '/' },
+				{ icon: 'tabler:hash', text: '标签', url: '/tags' },
 				{ icon: 'tabler:link', text: '友链', url: '/link' },
 				{ icon: 'tabler:archive', text: '归档', url: '/archive' },
+				{ icon: 'tabler:user', text: '关于', url: '/about' },
 			],
 		},
 	] satisfies Nav,
