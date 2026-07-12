@@ -88,6 +88,11 @@ export default defineNuxtConfig({
 	},
 
 	runtimeConfig: {
+		// 私有配置（仅服务端/构建时可用，不会泄露到客户端）
+		steam: {
+			apiKey: '',
+			id: '',
+		},
 		// @keep-sorted
 		public: {
 			arch,

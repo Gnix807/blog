@@ -15,14 +15,11 @@ interface SteamGame {
 	headerImage?: string
 }
 
-const games = ref<SteamGame[]>([])
-const loading = ref(true)
-const failed = ref(false)
 const sort = ref<'total' | 'recent'>('total')
 
-// 兼容多种后端返回格式：
+// 兼容多种返回格式：
+// - Steam 官方 GetOwnedGames：{ response: { games: [{ appid, name, playtime_forever, playtime_2weeks }] } }
 // - Halo Steam 插件 /games：{ items: [{ appId, name, playtimeForever, headerImageUrl, playtime2Weeks }] }
-// - 原始 Steam GetOwnedGames：{ response: { games: [{ appid, name, playtime_forever, playtime_2weeks }] } }
 function normalize(raw: any): SteamGame[] {
 	const arr = raw?.items ?? raw?.response?.games ?? raw?.games ?? raw?.data ?? []
 	return arr.map((g: any) => ({
@@ -34,21 +31,40 @@ function normalize(raw: any): SteamGame[] {
 	}))
 }
 
-onMounted(async () => {
-	if (!appConfig.steamApi) {
-		loading.value = false
-		return
-	}
+// 构建时（prerender）在 Node 中抓取，避免浏览器 CORS；API Key 仅存于服务器环境变量，不写入静态产物
+const { data } = await useAsyncData('steam-games', async () => {
+	const rc = useRuntimeConfig()
+	const key = rc.steam?.apiKey
+	const steamid = rc.steam?.id
 	try {
-		games.value = normalize(await $fetch<any>(appConfig.steamApi))
+		let raw: any
+		if (appConfig.steamApi) {
+			raw = await $fetch(appConfig.steamApi)
+		}
+		else if (key && steamid) {
+			raw = await $fetch('https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/', {
+				params: {
+					key,
+					steamid,
+					include_appinfo: 1,
+					include_played_free_games: 1,
+					format: 'json',
+				},
+			})
+		}
+		else {
+			return { games: [] as SteamGame[], configured: false, failed: false }
+		}
+		return { games: normalize(raw), configured: true, failed: false }
 	}
 	catch {
-		failed.value = true
+		return { games: [] as SteamGame[], configured: true, failed: true }
 	}
-	finally {
-		loading.value = false
-	}
-})
+}, { default: () => ({ games: [] as SteamGame[], configured: false, failed: false }) })
+
+const games = computed(() => data.value?.games ?? [])
+const configured = computed(() => data.value?.configured)
+const failed = computed(() => data.value?.failed)
 
 const totalHours = computed(() =>
 	Math.round(games.value.reduce((sum, g) => sum + (g.playtimeForever ?? 0), 0) / 60),
@@ -79,25 +95,18 @@ function capsule(game: SteamGame) {
 		游戏
 	</h1>
 
-	<div v-if="loading" class="game-hint">
-		加载中……
-	</div>
-
-	<!-- 未配置 Steam 接口 -->
-	<div v-else-if="!appConfig.steamApi" class="game-hint card">
+	<!-- 未配置 Steam 数据源 -->
+	<div v-if="!configured" class="game-hint card">
 		<Icon name="tabler:brand-steam" />
 		<p>
-			展示 Steam 游戏库需要一个后端接口（Steam Web API 有密钥与跨域限制，不能前端直连）。推荐两种方式：
-			① 在 1Panel 装一个 Halo 跑
-			<a href="https://github.com/Tim0x0/halo-plugin-steam" target="_blank" rel="noopener">halo-plugin-steam</a>
-			插件，用其 <code>/apis/api.steam.timxs.com/v1alpha1/games</code> 接口；
-			② 自建 Steam 代理返回 <code>GetOwnedGames</code> 格式 JSON。
-			任选其一，把地址填入 <code>app.config.ts</code> 的 <code>steamApi</code> 即可。
+			展示 Steam 游戏库需要在构建环境提供 Steam Web API Key 与 SteamID64（写入服务器环境变量 <code>NUXT_STEAM_API_KEY</code> / <code>NUXT_STEAM_ID</code>，不会写入代码）。
+			也可改用后端代理：把接口地址填入 <code>app.config.ts</code> 的 <code>steamApi</code>（如
+			<a href="https://github.com/Tim0x0/halo-plugin-steam" target="_blank" rel="noopener">halo-plugin-steam</a> 插件接口）。
 		</p>
 	</div>
 
 	<div v-else-if="failed" class="game-hint card">
-		Steam 数据加载失败，请检查 <code>steamApi</code> 接口。
+		Steam 数据获取失败，请检查 API Key / SteamID 是否正确、资料是否公开。
 	</div>
 
 	<template v-else>
