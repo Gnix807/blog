@@ -238,6 +238,7 @@ ${packageJson.homepage}
 		// @keep-sorted
 		skipInspections: [
 			'no-baseless',
+			'no-error-response',
 			'no-non-ascii-chars',
 			'no-uppercase-chars',
 		],
