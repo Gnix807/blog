@@ -8,7 +8,7 @@ categories: [技术]
 tags: [指南, 烤肉, 入门建议]
 references:
   - title: 原网页已托管至服务器
-    link: https://www.gnix807.cn/hosting/2025%E5%B9%B4%E8%AF%91%E5%88%B6%E5%AD%97%E5%B9%95%E6%8C%87%E5%8D%97%E5%8D%95%E9%A1%B5%E6%BB%A1%E8%A1%80%E7%89%88%20\(1\).html
+    link: https://www.gnix807.cn/docs/Tutorials/Translations/Overview
 ---
 
 
@@ -282,7 +282,3 @@ caption: 快速压制视频
 ## 五、写在后面
 
 Man, what can I say? 我没什么好说的。如果你还有想问的，可以来问我。我不相信 AI 翻译，我甚至用乐趣来反驳它。
-
----
-
-*作者：倪谅 · 更新于 2026-04-08 · 来源：<https://www.gnix807.cn/docs/Tutorials/Translations/Overview>*
