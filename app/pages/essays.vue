@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { orderBy } from 'es-toolkit/array'
+import ContentPic from '~/components/content/Pic.vue'
 import { moments } from '~/moments'
 
 const appConfig = useAppConfig()
@@ -56,7 +57,7 @@ function formatContent(text: string) {
 				class="talk-images"
 				:class="`count-${item.images.length}`"
 			>
-				<UtilImg
+				<ContentPic
 					v-for="(img, i) in item.images"
 					:key="i"
 					class="talk-image"
@@ -153,10 +154,18 @@ function formatContent(text: string) {
 	}
 
 	.talk-image {
-		width: 100%;
-		aspect-ratio: 1;
-		border-radius: 0.4rem;
-		object-fit: cover;
+		margin: 0;
+
+		:deep(figcaption) {
+			display: none;
+		}
+
+		:deep(img) {
+			width: 100%;
+			aspect-ratio: 1;
+			border-radius: 0.4rem;
+			object-fit: cover;
+		}
 	}
 }
 
