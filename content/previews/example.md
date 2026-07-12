@@ -1194,21 +1194,20 @@ items:
 
 ### SeriesGroup
 
-> 系列合集卡片，多张封面并排展示，底部含数量标签与跳转链接。
+> 系列合集卡片，多张封面堆叠展示（悬浮/点击按钮展开），底部含数量标签与详情链接。
 
 ::tab{:tabs='["组件","语法"]'}
 #tab1
 ::series-group
 ---
 title: 示例系列
-desc: 由多部作品组成的一个系列合集
-covers:
-  - https://picsum.photos/480/240?1
-  - https://picsum.photos/480/240?2
-  - https://picsum.photos/480/240?3
-count: 共 3 部
+description: 由多部作品组成的一个系列合集
+cover:
+  - https://picsum.photos/480/270?1
+  - https://picsum.photos/480/270?2
+  - https://picsum.photos/480/270?3
+count: 3
 link: '#series-group'
-linkText: 查看详情
 ---
 ::
 
@@ -1217,14 +1216,14 @@ linkText: 查看详情
 ::series-group
 ---
 title: 示例系列
-desc: 由多部作品组成的一个系列合集
-covers:
+description: 由多部作品组成的一个系列合集
+cover:                      # 单张字符串或多张数组均可
   - https://封面1.jpg
   - https://封面2.jpg
   - https://封面3.jpg
-count: 共 3 部
-link: /series/example
-linkText: 查看详情
+count: 3                    # 数字，渲染为「共 N 部 Galgame」
+link: /games/galgames/example
+openInNewTab: true          # link 是否新标签打开，默认 true
 ---
 ::
 ```
