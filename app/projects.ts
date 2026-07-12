@@ -73,4 +73,12 @@ export const projects: ProjectItem[] = [
 		relation: 'using',
 		icon: 'tabler:server-2',
 	},
+	{
+		name: '雨云 RainYun',
+		description: '本站所用的服务器提供商。',
+		link: 'https://www.rainyun.com/',
+		type: 'server',
+		relation: 'using',
+		icon: 'tabler:cloud',
+	},
 ]
