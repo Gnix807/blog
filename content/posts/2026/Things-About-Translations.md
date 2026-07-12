@@ -1,13 +1,14 @@
 ---
 title: 译制字幕指南
-description: 教你学烤肉这一块的
+description: 本文改编自 B 站 @Nachdenken符子 的译制字幕指南，从视频获取到字幕压制，给你一套完整的野生烤肉工具与方法论。
 date: 2026-07-10 22:20:07
 updated: 2026-07-11 22:25:56
 image:
 categories: [技术]
 tags: [指南, 烤肉, 入门建议]
 references:
-  - title: 文档太多，时间跨度也大，罄竹难书。
+  - title: 原网页已托管至服务器
+    link: https://www.gnix807.cn/hosting/2025%E5%B9%B4%E8%AF%91%E5%88%B6%E5%AD%97%E5%B9%95%E6%8C%87%E5%8D%97%E5%8D%95%E9%A1%B5%E6%BB%A1%E8%A1%80%E7%89%88%20\(1\).html
 ---
 
 
@@ -30,9 +31,9 @@ references:
 
 | 软件名称 | 用途 | 下载建议 |
 | --- | --- | --- |
-| Aegisub | 时间轴与特效制作 | 截至本文章定稿，最新版本是 3.4.2；Win/Mac 可直接下载安装；据 pkgs.org，Linux 主流发行版仓库基本都有它。下载：<https://aegisub.org/> |
-| Arctime Pro | 字幕快速制作 | 字幕制作软件，进阶功能收费（主要集中在各种配置上，只做字幕可用）；Win/Mac/Linux 全平台。下载：<https://arctime.org/download.html> |
-| yt-dlp | 视频下载 | 全能的多平台视频下载软件，开源免费；建议使用图形界面版本。下载：<https://github.com/ErrorFlynn/ytdlp-interface/releases/tag/v2.18.2> |
+| Aegisub | 时间轴与特效制作 | 截至本文章定稿，最新版本是 3.4.2；Win/Mac 可直接下载安装；据 pkgs.org，Linux 主流发行版仓库基本都有它。<br />下载：<https://aegisub.org/> |
+| Arctime Pro | 字幕快速制作 | 字幕制作软件，进阶功能收费（主要集中在各种配置上，只做字幕可用）；Win/Mac/Linux 全平台。<br />下载：<https://arctime.org/download.html> |
+| yt-dlp | 视频下载 | 全能的多平台视频下载软件，开源免费；建议使用图形界面版本。<br />下载：<https://github.com/ErrorFlynn/ytdlp-interface/releases/tag/v2.18.2> |
 
 还要准备一个你喜欢用的视频编辑软件，如果你没有喜欢的，这里是几个推荐：
 
@@ -254,7 +255,7 @@ caption: 快速压制视频
 - 如果你读懂了一句话但不确定怎么写成中文，需要抓一个学汉语言文学或汉语语言学的人，抓到了请务必善待。
 - 如果不能确定问题在哪，可能需要把以上两种人抓到一块开个「专家会诊」一起讨论——学外语的人对汉语语言学可能不太了解，反之亦然。
 
-### 3. 笑对校对
+### 3. ~~笑对~~校对
 
 抓一个人帮你校对，哪怕外语和中文水平和你差不多，也会比自己重看一遍有更好效果——两个人的知识范围和语言能力不可能完全重合。
 
