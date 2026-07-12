@@ -70,6 +70,8 @@ export default defineNuxtConfig({
 
 	nitro: {
 		prerender: {
+			// 单个页面（尤其依赖外部资源者）偶发失败时不中断整个构建
+			failOnError: false,
 			// 修复部分平台会在文章路径后添加 `/`，导致闪现 404 错误
 			// https://github.com/nuxt/content/issues/2378
 			autoSubfolderIndex: CLOUDFLARE_PAGES || GITHUB_ACTIONS || NETLIFY ? false : undefined,
