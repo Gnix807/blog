@@ -170,6 +170,7 @@ export default defineNuxtConfig({
 				// @keep-sorted
 				remarkPlugins: {
 					[pluginPath('remark-music')]: {},
+					[pluginPath('remark-zh-punct')]: {},
 					'remark-cjk-friendly': {},
 					'remark-pangu': {},
 					'remark-math': {},
