@@ -21,6 +21,9 @@ export default defineAppConfig({
 	/** 友圈聚合 API 地址（friend-circle-lite 等后端返回的 JSON 接口），留空则显示部署提示 */
 	friendCircleApi: '',
 
+	/** Bangumi 用户名/UID，用于番剧页拉取收藏；留空则显示提示 */
+	bangumiUser: '',
+
 	component: {
 		alert: {
 			/** 默认使用卡片风格还是扁平风格 */
@@ -126,6 +129,7 @@ export default defineAppConfig({
 				{ icon: 'tabler:bulb', text: '即刻', url: '/essays' },
 				{ icon: 'tabler:users-group', text: '友圈', url: '/fc' },
 				{ icon: 'tabler:device-gamepad-2', text: '游戏', url: '/games' },
+				{ icon: 'tabler:movie', text: '番剧', url: '/anime' },
 				{ icon: 'tabler:code', text: '项目', url: '/projects' },
 				{ icon: 'tabler:hash', text: '标签', url: '/tags' },
 				{ icon: 'tabler:link', text: '友链', url: '/link' },
