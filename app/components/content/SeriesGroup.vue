@@ -4,11 +4,11 @@ interface Props {
 	title: string
 	/** 系列描述 */
 	description?: string
-	/** 系列封面图，支持单张或多张 */
+	/** 系列封面图，支持多张 */
 	cover?: string | string[]
-	/** 系列详情链接 */
+	/** 系列详情路由 */
 	link?: string
-	/** 作品数量 */
+	/** 作品总数 */
 	count?: number
 	/** 是否在新标签页打开 */
 	openInNewTab?: boolean
@@ -22,28 +22,39 @@ const props = withDefaults(defineProps<Props>(), {
 const covers = computed(() => {
 	if (!props.cover)
 		return []
-	return Array.isArray(props.cover) ? props.cover : [props.cover]
+	if (Array.isArray(props.cover))
+		return props.cover
+	return [props.cover]
 })
 
 const isExpanded = ref(false)
+
 function toggleExpand() {
 	isExpanded.value = !isExpanded.value
 }
 </script>
 
 <template>
-<div class="series-group" :class="{ expanded: isExpanded }">
-	<!-- 封面区域 -->
+<div class="series-group">
+	<!-- 封面图区域 -->
 	<div class="cover-section">
 		<div class="cover-container">
+			<!-- 堆叠图片 -->
 			<div class="cover-stack">
 				<div
 					v-for="(coverItem, index) in covers"
 					:key="`${coverItem}-${index}`"
 					class="stack-item"
-					:style="{ 'zIndex': covers.length - index, '--i': index }"
+					:style="{
+						'zIndex': covers.length - index,
+						'--i': index,
+					}"
 				>
-					<UtilImg :src="coverItem" :alt="title" class="cover-image" />
+					<NuxtImg
+						:src="coverItem"
+						:alt="title"
+						class="cover-image"
+					/>
 				</div>
 			</div>
 		</div>
@@ -51,6 +62,7 @@ function toggleExpand() {
 
 	<!-- 信息区域 -->
 	<div class="info-section">
+		<!-- 左侧信息内容 -->
 		<div class="info-content">
 			<h2 class="series-title">
 				{{ title }}
@@ -60,13 +72,17 @@ function toggleExpand() {
 			</p>
 		</div>
 
+		<!-- 统计和操作区域 -->
 		<div class="meta-actions">
+			<!-- 统计信息 -->
 			<div v-if="count" class="series-count">
 				<Icon name="tabler:device-gamepad-2" />
 				<span>共 {{ count }} 部 Galgame</span>
 			</div>
 
+			<!-- 操作按钮 -->
 			<div class="action-area">
+				<!-- 展开/收起按钮 -->
 				<button
 					v-if="covers.length > 1"
 					class="expand-btn"
@@ -76,15 +92,17 @@ function toggleExpand() {
 					<Icon :name="isExpanded ? 'tabler:chevron-up' : 'tabler:chevron-down'" />
 				</button>
 
-				<UtilLink
+				<!-- 查看详情按钮 -->
+				<NuxtLink
 					v-if="link"
 					:to="link"
 					class="detail-link"
+					target="_blank"
 					title="查看详情"
 				>
 					<Icon name="tabler:arrow-right" />
 					<span>查看详情</span>
-				</UtilLink>
+				</NuxtLink>
 			</div>
 		</div>
 	</div>
@@ -95,18 +113,15 @@ function toggleExpand() {
 .series-group {
 	display: flex;
 	flex-direction: column;
+	gap: 0;
 	overflow: hidden;
 	border: 1px solid var(--c-border);
 	border-radius: 0.5rem;
 	background-color: transparent;
 	transition: all 0.2s ease;
-
-	article & {
-		max-width: $breakpoint-phone;
-		margin: 2rem auto;
-	}
 }
 
+// 封面图部分
 .cover-section {
 	flex-shrink: 0;
 	position: relative;
@@ -121,6 +136,13 @@ function toggleExpand() {
 	cursor: pointer;
 }
 
+.cover-wrapper {
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+
+// 堆叠图片容器
 .cover-stack {
 	display: flex;
 	align-items: center;
@@ -139,13 +161,16 @@ function toggleExpand() {
 	height: 80%;
 	aspect-ratio: 16 / 9;
 	border-radius: 0.3rem;
-	box-shadow: var(--box-shadow-2);
+	box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
 	transform: translateY(-50%) translateX(calc(var(--i, 0) * 60px));
 	transition: transform 0.5s ease-out;
+
+	@media (prefers-color-scheme: dark) {
+		box-shadow: 0 2px 8px rgb(0 0 0 / 40%);
+	}
 }
 
-.cover-stack:hover .stack-item,
-.series-group.expanded .stack-item {
+.cover-stack:hover .stack-item {
 	transform: translateY(-50%) translateX(calc(var(--i, 0) * 50%));
 }
 
@@ -156,11 +181,33 @@ function toggleExpand() {
 	object-fit: cover;
 }
 
+.cover-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(135deg, var(--c-bg-3), var(--c-bg-soft));
+	color: var(--c-text-3);
+
+	:deep(svg) {
+		opacity: 0.4;
+		width: 2rem;
+		height: 2rem;
+	}
+}
+
+// 信息部分
 .info-section {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
 	padding: 1rem;
+	border-top: none;
+
+	@media (prefers-color-scheme: dark) {
+		border-top-color: var(--c-border-dark, rgb(255 255 255 / 10%));
+	}
 }
 
 .info-content {
@@ -193,6 +240,7 @@ function toggleExpand() {
 	-webkit-box-orient: vertical;
 }
 
+// 统计和操作区域
 .meta-actions {
 	display: flex;
 	align-items: center;
@@ -200,10 +248,12 @@ function toggleExpand() {
 	gap: 0.5rem;
 }
 
+// 统计信息
 .series-count {
 	display: flex;
 	align-items: center;
 	gap: 0.3rem;
+	margin-top: 0;
 	font-size: 0.75rem;
 	color: var(--c-text-2);
 
@@ -214,6 +264,7 @@ function toggleExpand() {
 	}
 }
 
+// 操作区域
 .action-area {
 	display: flex;
 	flex-shrink: 0;
@@ -222,15 +273,16 @@ function toggleExpand() {
 	gap: 0.5rem;
 }
 
+// 展开/收起按钮
 .expand-btn {
-	display: flex;
+	display: none;
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
 	width: 2.5rem;
 	height: 2.5rem;
 	padding: 0;
-	border: 1px solid var(--c-border);
+	border: 1px solid var(--c-border-light, rgb(0 0 0 / 10%));
 	border-radius: 0.3rem;
 	background-color: var(--c-bg-soft);
 	color: var(--c-text-2);
@@ -238,7 +290,7 @@ function toggleExpand() {
 	cursor: pointer;
 
 	&:hover {
-		border-color: var(--c-primary);
+		border-color: var(--ld-primary, #4F46E5);
 		background-color: var(--c-bg-3);
 		color: var(--c-text);
 	}
@@ -249,6 +301,7 @@ function toggleExpand() {
 	}
 }
 
+// 查看详情按钮
 .detail-link {
 	display: inline-flex;
 	flex-shrink: 0;
@@ -269,6 +322,18 @@ function toggleExpand() {
 		width: 1em;
 		height: 1em;
 	}
+}
+
+// 展开动画
+.expand-enter-active,
+.expand-leave-active {
+	transition: all 0.3s ease;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+	opacity: 0;
+	max-height: 0;
 }
 
 @media (max-width: 640px) {
