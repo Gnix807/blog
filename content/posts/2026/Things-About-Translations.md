@@ -83,6 +83,7 @@ references:
 
 ::link-card
 ---
+icon: tabler:book
 title: Aegisub 团队的官方使用文档
 description: （官网链接疑似失效，转用字幕组非官方手册代替）
 link: https://aegi.vmoe.info/docs/3.2/Main_Page/
@@ -91,6 +92,7 @@ link: https://aegi.vmoe.info/docs/3.2/Main_Page/
 
 ::link-card
 ---
+icon: tabler:brand-bilibili
 title: 星空凛脂前辈的教程
 link: https://www.bilibili.com/video/BV1oK411T7kL/
 ---
@@ -98,6 +100,7 @@ link: https://www.bilibili.com/video/BV1oK411T7kL/
 
 ::link-card
 ---
+icon: tabler:brand-bilibili
 title: 站内很早就有的教程，专门介绍了 Medusa 快捷键
 link: https://www.bilibili.com/video/BV1ps411b7as
 ---
