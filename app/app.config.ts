@@ -12,6 +12,12 @@ export default defineAppConfig({
 	// 将 blog.config 中的配置项复制到 appConfig，方便调用
 	...blogConfig,
 
+	/** 侧栏公告卡片内容，支持 HTML；留空则不显示 */
+	announcement: '欢迎来到倪哥买提大巴扎！这里分享技术与生活。',
+
+	/** GitHub 卡片展示的用户名，留空则不显示 */
+	githubUsername: 'Gnix807',
+
 	component: {
 		alert: {
 			/** 默认使用卡片风格还是扁平风格 */
