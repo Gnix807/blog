@@ -82,6 +82,7 @@ const tip = computed(() => {
 .badge-text {
 	padding: 0.2em 0.4em;
 	line-height: 1.2;
+	white-space: nowrap;
 
 	&:empty {
 		display: none;
