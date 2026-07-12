@@ -450,3 +450,10 @@ B站站内亦有 HandBrake 的视频教程。或参阅软件[官方文档](https
 工具箱官网：[点击跳转](https://maruko.appinn.me)
 
 使用教程我实在懒得写了，看看视频吧。
+
+::video-embed
+---
+type: bilibili
+id: BV1um4y127zm
+---
+::
