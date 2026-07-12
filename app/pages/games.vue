@@ -32,6 +32,7 @@ function normalize(raw: any): SteamGame[] {
 }
 
 // 构建时（prerender）在 Node 中抓取，避免浏览器 CORS；API Key 仅存于服务器环境变量，不写入静态产物
+const nuxtApp = useNuxtApp()
 const { data } = await useAsyncData('steam-games', async () => {
 	const rc = useRuntimeConfig()
 	const key = rc.steam?.apiKey
@@ -60,7 +61,11 @@ const { data } = await useAsyncData('steam-games', async () => {
 	catch {
 		return { games: [] as SteamGame[], configured: true, failed: true }
 	}
-}, { default: () => ({ games: [] as SteamGame[], configured: false, failed: false }) })
+}, {
+	default: () => ({ games: [] as SteamGame[], configured: false, failed: false }),
+	// 客户端导航复用预渲染数据，避免在浏览器重新请求（会被 CORS 拦截）
+	getCachedData: key => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
+})
 
 const games = computed(() => data.value?.games ?? [])
 const configured = computed(() => data.value?.configured)

@@ -35,6 +35,7 @@ function buildUrl(pn: number) {
 }
 
 // 构建时（prerender）在 Node 中循环抓取所有页，避免浏览器 CORS/防盗链；数据烘焙进静态页
+const nuxtApp = useNuxtApp()
 const { data } = await useAsyncData('bili-bangumi', async () => {
 	if (!buildUrl(1))
 		return { list: [] as BiliItem[], failed: false }
@@ -60,7 +61,11 @@ const { data } = await useAsyncData('bili-bangumi', async () => {
 	catch {
 		return { list: [], failed: true }
 	}
-}, { default: () => ({ list: [] as BiliItem[], failed: false }) })
+}, {
+	default: () => ({ list: [] as BiliItem[], failed: false }),
+	// 客户端导航复用预渲染数据，避免在浏览器重新请求（会被 CORS 拦截）
+	getCachedData: key => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
+})
 
 const filter = ref(0)
 const filteredList = computed(() => {
