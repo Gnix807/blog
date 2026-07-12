@@ -125,7 +125,6 @@ export default defineAppConfig({
 				{ icon: 'tabler:files', text: '文章', url: '/' },
 				{ icon: 'tabler:bulb', text: '即刻', url: '/essays' },
 				{ icon: 'tabler:users-group', text: '友圈', url: '/fc' },
-				{ icon: 'tabler:device-gamepad-2', text: '游戏', url: '/games' },
 				{ icon: 'tabler:movie', text: '番剧', url: '/anime' },
 				{ icon: 'tabler:code', text: '项目', url: '/projects' },
 				{ icon: 'tabler:hash', text: '标签', url: '/tags' },

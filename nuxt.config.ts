@@ -83,18 +83,12 @@ export default defineNuxtConfig({
 		...mapValues(redirectList, to => ({ redirect: { to, statusCode: 308 as const } })),
 		'/api/bilibili': { prerender: true, headers: { 'Content-Type': 'application/json' } },
 		'/api/stats': { prerender: true, headers: { 'Content-Type': 'application/json' } },
-		'/api/steam': { prerender: true, headers: { 'Content-Type': 'application/json' } },
 		'/atom.xml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 		'/favicon.ico': { redirect: { to: blogConfig.favicon } },
 		'/subscriptions.opml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 	},
 
 	runtimeConfig: {
-		// 私有配置（仅服务端/构建时可用，不会泄露到客户端）
-		steam: {
-			apiKey: '',
-			id: '',
-		},
 		// @keep-sorted
 		public: {
 			arch,
@@ -107,10 +101,6 @@ export default defineNuxtConfig({
 			ci: env.TENCENTCLOUD_RUNENV === 'SCF' ? 'EdgeOne' : ciName || '',
 			nodeVersion,
 			platform,
-			// Steam 后端代理接口（可选，替代官方 API）
-			steamApi: '',
-			// Steam 个人主页链接（展示用）
-			steamProfile: '',
 		},
 	},
 
