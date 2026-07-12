@@ -23,28 +23,39 @@ const statusLabel: Record<number, string> = {
 	3: '看过',
 }
 
-const apiUrl = computed(() => {
-	if (appConfig.biliApi)
-		return appConfig.biliApi
-	if (appConfig.biliUid)
-		return `https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=0&vmid=${appConfig.biliUid}&ps=30&pn=1`
-	return ''
-})
+const PAGE_SIZE = 30
+const MAX_PAGES = 40
 
-// 构建时（prerender）在 Node 中直连抓取，避免浏览器 CORS/防盗链；数据烘焙进静态页
+function buildUrl(pn: number) {
+	if (appConfig.biliApi)
+		return `${appConfig.biliApi}${appConfig.biliApi.includes('?') ? '&' : '?'}pn=${pn}&ps=${PAGE_SIZE}`
+	if (appConfig.biliUid)
+		return `https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=0&vmid=${appConfig.biliUid}&ps=${PAGE_SIZE}&pn=${pn}`
+	return ''
+}
+
+// 构建时（prerender）在 Node 中循环抓取所有页，避免浏览器 CORS/防盗链；数据烘焙进静态页
 const { data } = await useAsyncData('bili-bangumi', async () => {
-	if (!apiUrl.value)
+	if (!buildUrl(1))
 		return { list: [] as BiliItem[], failed: false }
+	const headers = {
+		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+		'Referer': 'https://www.bilibili.com',
+	}
 	try {
-		const res = await $fetch<{ code: number, data?: { list?: BiliItem[] } }>(apiUrl.value, {
-			headers: {
-				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-				'Referer': 'https://www.bilibili.com',
-			},
-		})
-		if (res.code !== 0)
-			return { list: [], failed: true }
-		return { list: res.data?.list ?? [], failed: false }
+		const collected: BiliItem[] = []
+		let total = Infinity
+		for (let pn = 1; pn <= MAX_PAGES && collected.length < total; pn++) {
+			const res = await $fetch<{ code: number, data?: { list?: BiliItem[], total?: number } }>(buildUrl(pn), { headers })
+			if (res.code !== 0)
+				return pn === 1 ? { list: [], failed: true } : { list: collected, failed: false }
+			const pageList = res.data?.list ?? []
+			total = res.data?.total ?? pageList.length
+			collected.push(...pageList)
+			if (!pageList.length)
+				break
+		}
+		return { list: collected, failed: false }
 	}
 	catch {
 		return { list: [], failed: true }
@@ -52,9 +63,14 @@ const { data } = await useAsyncData('bili-bangumi', async () => {
 }, { default: () => ({ list: [] as BiliItem[], failed: false }) })
 
 const filter = ref(0)
-const list = computed(() => {
+const filteredList = computed(() => {
 	const all = data.value?.list ?? []
 	return filter.value ? all.filter(i => i.follow_status === filter.value) : all
+})
+
+const { page, totalPages, listPaged: list } = usePagination(filteredList, { perPage: 24 })
+watch(filter, () => {
+	page.value = 1
 })
 
 function mediaLink(item: BiliItem) {
@@ -110,6 +126,8 @@ function mediaLink(item: BiliItem) {
 				</div>
 			</UtilLink>
 		</div>
+
+		<ZPagination v-if="totalPages > 1" v-model="page" :total-pages="totalPages" />
 	</template>
 </div>
 </template>
