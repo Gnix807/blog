@@ -14,20 +14,11 @@ export interface MomentItem {
 /** 即刻/说说数据（展示时按时间倒序） */
 export const moments: MomentItem[] = [
 	{
-		content: '「即刻」页面上线啦，以后随手记录一些碎碎念～欢迎来 [友链页](/link) 串门。',
-		location: '西安',
-		tags: ['博客'],
-		createdAt: '2026-07-12 10:00',
-	},
-	{
-		content: '测试一下多图九宫格效果。',
+		content: '冰山图宇宙现已正式上线！',
 		images: [
-			'https://picsum.photos/400/400?a',
-			'https://picsum.photos/400/400?b',
-			'https://picsum.photos/400/400?c',
+			'https://raw.githubusercontent.com/Gnix807/icebergs-1.0/main/public/screenshots/homepage.png',
 		],
-		location: '西安',
-		tags: ['日常'],
-		createdAt: '2026-07-11 21:00',
+		tags: ['冰山图宇宙', '上线'],
+		createdAt: '2026-07-12 18:00',
 	},
 ]
