@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRouteQuery } from '@vueuse/router'
 import { orderBy } from 'es-toolkit/array'
 
 const appConfig = useAppConfig()
@@ -10,129 +9,102 @@ useSeoMeta({
 
 const { data: listRaw } = await useAsyncData('posts:index', () => getArticleIndexOptions(), { default: () => [] })
 
-const selectedTag = useRouteQuery<string | undefined>('tag', undefined)
-
-const tagList = computed(() => {
-	const map = new Map<string, number>()
-	for (const article of listRaw.value) {
-		for (const tag of article.tags ?? [])
-			map.set(tag, (map.get(tag) ?? 0) + 1)
+const articlesByTag = computed(() => {
+	const result: Record<string, any[]> = {}
+	const articles = orderBy(listRaw.value, ['date'], ['desc'])
+	for (const article of articles) {
+		for (const tag of article.tags ?? []) {
+			(result[tag] ??= []).push(article)
+		}
 	}
-	return orderBy([...map.entries()].map(([name, count]) => ({ name, count })), ['count'], ['desc'])
+	return result
 })
 
-const filteredList = computed(() => selectedTag.value
-	? orderBy(listRaw.value.filter(a => a.tags?.includes(selectedTag.value!)), ['date'], ['desc'])
-	: [],
+const sortedTags = computed(() =>
+	Object.keys(articlesByTag.value).sort((a, b) =>
+		(articlesByTag.value[b]?.length || 0) - (articlesByTag.value[a]?.length || 0),
+	),
 )
-
-function fontSize(count: number) {
-	const max = tagList.value[0]?.count ?? 1
-	return `${0.8 + (count / max) * 0.9}em`
-}
 </script>
 
 <template>
 <template #aside>
 	<WidgetBlogStats />
 	<WidgetBlogTech />
+	<WidgetPoetry />
 </template>
 
-<div class="tags-page">
-	<h1 class="tags-heading text-creative">
-		标签
-	</h1>
+<div class="tags">
+	<section v-for="tag in sortedTags" :key="tag" class="tag-group">
+		<div class="tag-title">
+			<h2 class="tag-name">
+				{{ tag }}
+			</h2>
+			<div class="tag-info">
+				<span>{{ articlesByTag[tag]?.length }} 篇</span>
+			</div>
+		</div>
 
-	<div class="tag-cloud">
-		<UtilLink
-			v-for="tag in tagList"
-			:key="tag.name"
-			:to="selectedTag === tag.name ? '/tags' : `/tags?tag=${encodeURIComponent(tag.name)}`"
-			class="tag-chip"
-			:class="{ active: selectedTag === tag.name }"
-			:style="{ fontSize: fontSize(tag.count) }"
-		>
-			<Icon name="tabler:hash" />{{ tag.name }}
-			<span class="tag-count">{{ tag.count }}</span>
-		</UtilLink>
-	</div>
-
-	<template v-if="selectedTag">
-		<h2 class="tags-subheading">
-			<Icon name="tabler:hash" />{{ selectedTag }}
-			<span class="tags-subcount">共 {{ filteredList.length }} 篇</span>
-		</h2>
-		<TransitionGroup tag="menu" class="tags-list" name="float-in">
-			<PostArchive
-				v-for="article, index in filteredList"
-				:key="article.path"
-				v-bind="article"
-				:to="article.path"
-				:style="getFixedDelay(index * 0.03)"
-			/>
-		</TransitionGroup>
-	</template>
+		<menu class="archive-list">
+			<TransitionGroup appear name="float-in">
+				<PostArchive
+					v-for="article, index in articlesByTag[tag]"
+					:key="article.path"
+					v-bind="article"
+					:to="article.path"
+					:style="getFixedDelay(index * 0.03)"
+				/>
+			</TransitionGroup>
+		</menu>
+	</section>
 </div>
 </template>
 
 <style lang="scss" scoped>
-.tags-page {
+.tags {
 	padding: 1rem;
+	mask-image: linear-gradient(#FFF 50%, #FFF5);
 }
 
-.tags-heading {
-	font-size: 1.5em;
+.tag-group {
+	margin: 1rem 0 3rem;
 }
 
-.tag-cloud {
+.tag-title {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 0.5em;
-	margin: 1.5rem 0;
-}
+	justify-content: space-between;
+	gap: 1em;
+	position: sticky;
+	opacity: 0.5;
+	top: 0;
+	font-size: min(1.5em, 5vw);
+	color: transparent;
+	transition: color 0.2s;
 
-.tag-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.1em;
-	padding: 0.2em 0.7em;
-	border-radius: 1em;
-	background-color: var(--c-bg-2);
-	color: var(--c-text-2);
-	line-height: 1.6;
-	transition: all 0.2s;
-
-	&:hover {
-		background-color: var(--c-bg-soft);
-		color: var(--c-text);
-	}
-
-	&.active {
-		background-color: var(--c-primary-soft);
-		color: var(--c-primary);
-	}
-
-	.tag-count {
-		font-size: 0.7em;
-		opacity: 0.7;
-	}
-}
-
-.tags-subheading {
-	display: flex;
-	align-items: center;
-	gap: 0.2em;
-	margin: 1.5rem 0 1rem;
-	font-size: 1.2em;
-	color: var(--c-text);
-
-	.tags-subcount {
-		font-size: 0.7em;
+	&::selection, :hover > & {
 		color: var(--c-text-3);
 	}
+
+	> .tag-name {
+		margin-bottom: -0.3em;
+		mask-image: linear-gradient(#FFF 50%, transparent);
+		font-family: var(--font-stroke-free);
+		font-size: 3em;
+		font-weight: 800;
+		line-height: 1;
+		z-index: -1;
+		-webkit-text-stroke: 1px var(--c-text-3);
+	}
+
+	> .tag-info {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		column-gap: 0.5em;
+	}
 }
 
-.tags-list {
+.archive-list {
 	display: grid;
 	margin: 0;
 	padding: 0;
