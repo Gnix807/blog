@@ -21,16 +21,6 @@ export default defineAppConfig({
 	/** 友圈聚合 API 地址（friend-circle-lite 等后端返回的 JSON 接口），留空则显示部署提示 */
 	friendCircleApi: '',
 
-	/** B站追番：你的 B站 UID（个人空间数字ID），追番列表需公开；留空则显示提示 */
-	biliUid: '96621291',
-	/** 可选：B站追番代理接口（构建时直连被风控时改用，返回 B站原始 JSON）；留空则直连官方接口 */
-	biliApi: '',
-
-	/** Steam 拥有游戏 API 接口（自建代理，返回 IPlayerService/GetOwnedGames 格式 JSON）；留空则显示部署提示 */
-	steamApi: '',
-	/** Steam 个人主页链接，可选 */
-	steamProfile: '',
-
 	component: {
 		alert: {
 			/** 默认使用卡片风格还是扁平风格 */

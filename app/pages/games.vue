@@ -2,6 +2,7 @@
 import { orderBy } from 'es-toolkit/array'
 
 const appConfig = useAppConfig()
+const runtimeConfig = useRuntimeConfig()
 useSeoMeta({
 	title: '游戏',
 	description: `${appConfig.author.name}的 Steam 游戏库与游玩时长。`,
@@ -16,55 +17,11 @@ interface SteamGame {
 }
 
 const sort = ref<'total' | 'recent'>('total')
+const steamProfile = computed(() => runtimeConfig.public.steamProfile)
 
-// 兼容多种返回格式：
-// - Steam 官方 GetOwnedGames：{ response: { games: [{ appid, name, playtime_forever, playtime_2weeks }] } }
-// - Halo Steam 插件 /games：{ items: [{ appId, name, playtimeForever, headerImageUrl, playtime2Weeks }] }
-function normalize(raw: any): SteamGame[] {
-	const arr = raw?.items ?? raw?.response?.games ?? raw?.games ?? raw?.data ?? []
-	return arr.map((g: any) => ({
-		appid: g.appId ?? g.appid,
-		name: g.name,
-		playtimeForever: g.playtimeForever ?? g.playtime_forever ?? 0,
-		playtime2Weeks: g.playtime2Weeks ?? g.playtime_2weeks,
-		headerImage: g.headerImageUrl ?? g.realHeaderImage ?? undefined,
-	}))
-}
-
-// 构建时（prerender）在 Node 中抓取，避免浏览器 CORS；API Key 仅存于服务器环境变量，不写入静态产物
-const nuxtApp = useNuxtApp()
-const { data } = await useAsyncData('steam-games', async () => {
-	const rc = useRuntimeConfig()
-	const key = rc.steam?.apiKey
-	const steamid = rc.steam?.id
-	try {
-		let raw: any
-		if (appConfig.steamApi) {
-			raw = await $fetch(appConfig.steamApi)
-		}
-		else if (key && steamid) {
-			raw = await $fetch('https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/', {
-				params: {
-					key,
-					steamid,
-					include_appinfo: 1,
-					include_played_free_games: 1,
-					format: 'json',
-				},
-			})
-		}
-		else {
-			return { games: [] as SteamGame[], configured: false, failed: false }
-		}
-		return { games: normalize(raw), configured: true, failed: false }
-	}
-	catch {
-		return { games: [] as SteamGame[], configured: true, failed: true }
-	}
-}, {
+// 同源预渲染接口（/api/steam 在构建时于服务端抓取），客户端导航与刷新都不触发跨域请求
+const { data } = await useFetch('/api/steam', {
 	default: () => ({ games: [] as SteamGame[], configured: false, failed: false }),
-	// 客户端导航复用预渲染数据，避免在浏览器重新请求（会被 CORS 拦截）
-	getCachedData: key => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
 })
 
 const games = computed(() => data.value?.games ?? [])
@@ -128,7 +85,7 @@ function capsule(game: SteamGame) {
 			<div class="game-stats">
 				<span><b>{{ games.length }}</b> 款游戏</span>
 				<span><b>{{ totalHours }}</b> 小时</span>
-				<UtilLink v-if="appConfig.steamProfile" :to="appConfig.steamProfile" class="steam-link">
+				<UtilLink v-if="steamProfile" :to="steamProfile" class="steam-link">
 					<Icon name="tabler:brand-steam" />主页
 				</UtilLink>
 			</div>

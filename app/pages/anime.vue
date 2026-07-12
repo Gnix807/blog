@@ -23,49 +23,13 @@ const statusLabel: Record<number, string> = {
 	3: '看过',
 }
 
-const PAGE_SIZE = 30
-const MAX_PAGES = 40
-
-function buildUrl(pn: number) {
-	if (appConfig.biliApi)
-		return `${appConfig.biliApi}${appConfig.biliApi.includes('?') ? '&' : '?'}pn=${pn}&ps=${PAGE_SIZE}`
-	if (appConfig.biliUid)
-		return `https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=0&vmid=${appConfig.biliUid}&ps=${PAGE_SIZE}&pn=${pn}`
-	return ''
-}
-
-// 构建时（prerender）在 Node 中循环抓取所有页，避免浏览器 CORS/防盗链；数据烘焙进静态页
-const nuxtApp = useNuxtApp()
-const { data } = await useAsyncData('bili-bangumi', async () => {
-	if (!buildUrl(1))
-		return { list: [] as BiliItem[], failed: false }
-	const headers = {
-		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-		'Referer': 'https://www.bilibili.com',
-	}
-	try {
-		const collected: BiliItem[] = []
-		let total = Infinity
-		for (let pn = 1; pn <= MAX_PAGES && collected.length < total; pn++) {
-			const res = await $fetch<{ code: number, data?: { list?: BiliItem[], total?: number } }>(buildUrl(pn), { headers })
-			if (res.code !== 0)
-				return pn === 1 ? { list: [], failed: true } : { list: collected, failed: false }
-			const pageList = res.data?.list ?? []
-			total = res.data?.total ?? pageList.length
-			collected.push(...pageList)
-			if (!pageList.length)
-				break
-		}
-		return { list: collected, failed: false }
-	}
-	catch {
-		return { list: [], failed: true }
-	}
-}, {
-	default: () => ({ list: [] as BiliItem[], failed: false }),
-	// 客户端导航复用预渲染数据，避免在浏览器重新请求（会被 CORS 拦截）
-	getCachedData: key => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
+// 同源预渲染接口（/api/bilibili 在构建时于服务端抓取），客户端导航与刷新都不触发跨域/防盗链请求
+const { data } = await useFetch('/api/bilibili', {
+	default: () => ({ list: [] as BiliItem[], configured: false, failed: false }),
 })
+
+const configured = computed(() => data.value?.configured)
+const failed = computed(() => data.value?.failed)
 
 const filter = ref(0)
 const filteredList = computed(() => {
@@ -94,12 +58,12 @@ function mediaLink(item: BiliItem) {
 		番剧
 	</h1>
 
-	<div v-if="!appConfig.biliUid && !appConfig.biliApi" class="anime-hint card">
+	<div v-if="!configured" class="anime-hint card">
 		<Icon name="tabler:brand-bilibili" />
-		<p>在 <code>app.config.ts</code> 的 <code>biliUid</code> 填入你的 B站 UID（追番列表设为公开），即可展示追番。若构建时被 B站风控，可部署代理并填 <code>biliApi</code>。</p>
+		<p>在 <code>nuxt.config.ts</code> 的 <code>runtimeConfig.public.biliUid</code> 填入你的 B站 UID（追番列表设为公开），即可展示追番。若构建时被 B站风控，可部署代理并填 <code>biliApi</code>。</p>
 	</div>
 
-	<div v-else-if="data?.failed" class="anime-hint card">
+	<div v-else-if="failed" class="anime-hint card">
 		追番数据获取失败（可能被 B站风控或列表未公开）。可尝试填写 <code>biliApi</code> 代理接口。
 	</div>
 

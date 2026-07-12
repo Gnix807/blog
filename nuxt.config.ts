@@ -81,7 +81,9 @@ export default defineNuxtConfig({
 	// @keep-sorted
 	routeRules: {
 		...mapValues(redirectList, to => ({ redirect: { to, statusCode: 308 as const } })),
+		'/api/bilibili': { prerender: true, headers: { 'Content-Type': 'application/json' } },
 		'/api/stats': { prerender: true, headers: { 'Content-Type': 'application/json' } },
+		'/api/steam': { prerender: true, headers: { 'Content-Type': 'application/json' } },
 		'/atom.xml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 		'/favicon.ico': { redirect: { to: blogConfig.favicon } },
 		'/subscriptions.opml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
@@ -96,11 +98,19 @@ export default defineNuxtConfig({
 		// @keep-sorted
 		public: {
 			arch,
+			// B站追番代理接口（可选，直连被风控时用）
+			biliApi: '',
+			// B站 UID（追番列表需公开）
+			biliUid: '96621291',
 			buildTime: Temporal.Now.zonedDateTimeISO().toString(),
 			// EdgeOne 检测暂时不可用
 			ci: env.TENCENTCLOUD_RUNENV === 'SCF' ? 'EdgeOne' : ciName || '',
 			nodeVersion,
 			platform,
+			// Steam 后端代理接口（可选，替代官方 API）
+			steamApi: '',
+			// Steam 个人主页链接（展示用）
+			steamProfile: '',
 		},
 	},
 
