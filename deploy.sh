@@ -19,7 +19,7 @@ echo "==> [2/4] 安装依赖"
 pnpm install --frozen-lockfile
 
 echo "==> [3/4] 构建静态站点"
-pnpm generate
+npx nuxi generate
 
 echo "==> [4/4] 部署到 $SITE_DIR"
 if [ ! -d "$SITE_DIR" ]; then
