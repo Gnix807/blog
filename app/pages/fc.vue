@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const appConfig = useAppConfig()
 useSeoMeta({
 	title: '友圈',
 	description: '汇聚友链博客的最新动态。',
@@ -23,24 +22,9 @@ interface FcResponse {
 	article_data?: FcArticle[]
 }
 
-const data = ref<FcResponse | null>(null)
-const loading = ref(true)
-const failed = ref(false)
-
-onMounted(async () => {
-	if (!appConfig.friendCircleApi) {
-		loading.value = false
-		return
-	}
-	try {
-		data.value = await $fetch<FcResponse>(appConfig.friendCircleApi)
-	}
-	catch {
-		failed.value = true
-	}
-	finally {
-		loading.value = false
-	}
+// 同源预渲染接口：/api/friend-circle 在构建时于服务端抓取并聚合各友链 RSS，无需外部后端、无跨域
+const { data } = await useFetch<FcResponse>('/api/friend-circle', {
+	default: () => ({ statistical_data: {}, article_data: [] as FcArticle[] }),
 })
 
 const articles = computed(() => data.value?.article_data ?? [])
@@ -58,24 +42,16 @@ const stats = computed(() => data.value?.statistical_data)
 		友圈
 	</h1>
 
-	<div v-if="stats" class="fc-stats">
+	<div v-if="stats && (stats.friends_num || stats.article_num)" class="fc-stats">
 		<span>{{ stats.friends_num ?? 0 }} 位朋友</span>
 		<span>{{ stats.article_num ?? 0 }} 篇文章</span>
 		<span v-if="stats.last_updated_time">更新于 {{ stats.last_updated_time }}</span>
 	</div>
 
-	<div v-if="loading" class="fc-hint">
-		加载中……
-	</div>
-
-	<!-- 未配置后端 -->
-	<div v-else-if="!appConfig.friendCircleApi" class="fc-hint card">
+	<!-- 暂无可聚合的友链订阅源 -->
+	<div v-if="!articles.length" class="fc-hint card">
 		<Icon name="tabler:rss" />
-		<p>友圈需要一个聚合后端服务。部署 <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="noopener">Friend-Circle-Lite</a> 等服务后，把返回 JSON 的接口地址填入 <code>app.config.ts</code> 的 <code>friendCircleApi</code> 即可。</p>
-	</div>
-
-	<div v-else-if="failed" class="fc-hint card">
-		友圈数据加载失败，请检查 <code>friendCircleApi</code> 地址。
+		<p>暂无友圈动态。请在 <code>app/feeds.ts</code> 中添加带有 <code>feed</code>（RSS/Atom 订阅源）的友链，构建时会自动抓取聚合。</p>
 	</div>
 
 	<menu v-else class="fc-list">

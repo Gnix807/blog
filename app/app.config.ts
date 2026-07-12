@@ -18,9 +18,6 @@ export default defineAppConfig({
 	/** GitHub 卡片展示的用户名，留空则不显示 */
 	githubUsername: 'Gnix807',
 
-	/** 友圈聚合 API 地址（friend-circle-lite 等后端返回的 JSON 接口），留空则显示部署提示 */
-	friendCircleApi: '',
-
 	component: {
 		alert: {
 			/** 默认使用卡片风格还是扁平风格 */
