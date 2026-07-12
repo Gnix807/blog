@@ -18,6 +18,9 @@ export default defineAppConfig({
 	/** GitHub 卡片展示的用户名，留空则不显示 */
 	githubUsername: 'Gnix807',
 
+	/** 友圈聚合 API 地址（friend-circle-lite 等后端返回的 JSON 接口），留空则显示部署提示 */
+	friendCircleApi: '',
+
 	component: {
 		alert: {
 			/** 默认使用卡片风格还是扁平风格 */
@@ -121,6 +124,7 @@ export default defineAppConfig({
 			items: [
 				{ icon: 'tabler:files', text: '文章', url: '/' },
 				{ icon: 'tabler:bulb', text: '即刻', url: '/essays' },
+				{ icon: 'tabler:users-group', text: '友圈', url: '/fc' },
 				{ icon: 'tabler:hash', text: '标签', url: '/tags' },
 				{ icon: 'tabler:link', text: '友链', url: '/link' },
 				{ icon: 'tabler:archive', text: '归档', url: '/archive' },
