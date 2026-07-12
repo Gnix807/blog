@@ -52,9 +52,23 @@ references:
 下面介绍的工具大概有「免费」和「操作空间大」两个优点，缺点则是操作略繁琐。简要介绍 yt-dlp 及其图形界面：
 
 1. 首先下载 yt-dlp。示例里将使用 ytdlp-interface 作为图形界面。下载并解压后，应获得一个含有相应文件的文件夹。
-   ![文件夹应含有如图所示内容](https://img.gnix807.cn/146848b1-cf51-4d5e-a904-f9bc4d32acfc.png)
+
+   ::pic
+   ---
+   src: https://img.gnix807.cn/146848b1-cf51-4d5e-a904-f9bc4d32acfc.png
+   caption: 文件夹应含有如图所示内容
+   ---
+   ::
+
 2. 双击 `ytdlp-interface.exe` 打开应用。
-   ![应用主界面](https://img.gnix807.cn/e0e31adc-3fc5-471b-945a-399be6330203.png)
+
+   ::pic
+   ---
+   src: https://img.gnix807.cn/e0e31adc-3fc5-471b-945a-399be6330203.png
+   caption: 应用主界面
+   ---
+   ::
+
 3. 点击 **Download folder** 条，选择自己心怡的下载路径。
 4. （可选）点击 **Settings** 按钮进行自定义设置（如导入 Cookies、修改下载视频画质等）。
 5. 复制想要下载的视频链接，粘贴至该应用，点击 **Start Download** 开始下载。
