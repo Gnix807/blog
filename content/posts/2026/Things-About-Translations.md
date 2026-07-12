@@ -31,9 +31,9 @@ references:
 
 | 软件名称 | 用途 | 下载建议 |
 | --- | --- | --- |
-| Aegisub | 时间轴与特效制作 | 截至本文章定稿，最新版本是 3.4.2；Win/Mac 可直接下载安装；据 pkgs.org，Linux 主流发行版仓库基本都有它。<br />下载：<https://aegisub.org/> |
-| Arctime Pro | 字幕快速制作 | 字幕制作软件，进阶功能收费（主要集中在各种配置上，只做字幕可用）；Win/Mac/Linux 全平台。<br />下载：<https://arctime.org/download.html> |
-| yt-dlp | 视频下载 | 全能的多平台视频下载软件，开源免费；建议使用图形界面版本。<br />下载：<https://github.com/ErrorFlynn/ytdlp-interface/releases/tag/v2.18.2> |
+| :badge[Aegisub]{link="https://aegisub.org/"} | 时间轴与特效制作 | 截至本文章定稿，最新版本是 3.4.2；Win/Mac 可直接下载安装；据 pkgs.org，Linux 主流发行版仓库基本都有它。<br />下载：<https://aegisub.org/> |
+| :badge[Arctime Pro]{link="https://arctime.org/download.html"} | 字幕快速制作 | 字幕制作软件，进阶功能收费（主要集中在各种配置上，只做字幕可用）；Win/Mac/Linux 全平台。<br />下载：<https://arctime.org/download.html> |
+| :badge[yt-dlp]{link="https://github.com/ErrorFlynn/ytdlp-interface/releases/tag/v2.18.2"} | 视频下载 | 全能的多平台视频下载软件，开源免费；建议使用图形界面版本。<br />下载：<https://github.com/ErrorFlynn/ytdlp-interface/releases/tag/v2.18.2> |
 
 还要准备一个你喜欢用的视频编辑软件，如果你没有喜欢的，这里是几个推荐：
 
@@ -203,6 +203,7 @@ caption: 样式编辑页面
 
 关于编辑字体样式的建议：
 
+::folding{title="关于编辑字体样式的建议"}
 - 在你问之前抢答：不，得意黑不适合做字幕。
 - 慎用衬线字体，会看不清。
 - 黑体是安全的选择；找到一种美观且可读性强的黑体会极大提升舒适性。思源黑体是个不错的起点，方正也出过不少适合做字幕的黑体。
@@ -210,6 +211,7 @@ caption: 样式编辑页面
 - 如有需要，花些时间将硬字幕字体匹配成原视频里出现文字所用的字体，是绝对值得的。
 - 这里面所有选项都可以戳着玩玩，直到放到视频里看起来舒服为止。
 - 只要你看起来舒服了，那就差不多了。
+::
 
 如果今天不想折腾字体，网上有许多字幕组无偿分享了设置好的字幕样式。科技区搬运工常用的一种适合双语字幕的样式就是辉光字幕组日常使用并分享的（请使用 Aegisub 导入，Arctime 不具备直接导入 ass 样式功能）。
 
