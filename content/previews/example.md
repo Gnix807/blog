@@ -1120,6 +1120,116 @@ id: '7222222794333998392'
 ```
 ::
 
+### Music
+
+> 单行音乐跳转条，左侧封面 + 右侧歌名/歌手，点击跳转到音乐平台。
+
+::tab{:tabs='["组件","语法"]'}
+#tab1
+::music
+---
+title: 示例歌曲
+artist: 某位歌手
+link: https://music.163.com/
+cover: https://picsum.photos/100/100
+---
+::
+
+#tab2
+```mdc
+::music
+---
+title: 示例歌曲
+artist: 某位歌手
+link: https://music.163.com/
+cover: https://picsum.photos/100/100
+---
+::
+```
+::
+
+### ProjectGroup
+
+> 项目卡片网格，`icon` 支持 Iconify 图标名或图片 URL，`title` 可省略。
+
+::tab{:tabs='["组件","语法"]'}
+#tab1
+::project-group
+---
+title: 开发工具
+items:
+  - title: VS Code
+    desc: 代码编辑器
+    link: https://code.visualstudio.com/
+    icon: tabler:brand-vscode
+  - title: Nuxt
+    desc: Vue 全栈框架
+    link: https://nuxt.com/
+    icon: tabler:brand-nuxt
+  - title: 图标示例
+    desc: 也支持图片 URL
+    link: https://picsum.photos/
+    icon: https://picsum.photos/100/100
+---
+::
+
+#tab2
+```mdc
+::project-group
+---
+title: 开发工具
+items:
+  - title: VS Code
+    desc: 代码编辑器
+    link: https://code.visualstudio.com/
+    icon: tabler:brand-vscode
+  - title: Nuxt
+    desc: Vue 全栈框架
+    link: https://nuxt.com/
+    icon: tabler:brand-nuxt
+---
+::
+```
+::
+
+### SeriesGroup
+
+> 系列合集卡片，多张封面并排展示，底部含数量标签与跳转链接。
+
+::tab{:tabs='["组件","语法"]'}
+#tab1
+::series-group
+---
+title: 示例系列
+desc: 由多部作品组成的一个系列合集
+covers:
+  - https://picsum.photos/480/240?1
+  - https://picsum.photos/480/240?2
+  - https://picsum.photos/480/240?3
+count: 共 3 部
+link: '#series-group'
+linkText: 查看详情
+---
+::
+
+#tab2
+```mdc
+::series-group
+---
+title: 示例系列
+desc: 由多部作品组成的一个系列合集
+covers:
+  - https://封面1.jpg
+  - https://封面2.jpg
+  - https://封面3.jpg
+count: 共 3 部
+link: /series/example
+linkText: 查看详情
+---
+::
+```
+::
+
 ## 组件使用方法
 
 一是看开头提到的 MDC 文档，至关重要。二是看使用组件对应的源代码 (`example.md`)，也很重要。三是看我文章的调用方式，没有就慎用。
