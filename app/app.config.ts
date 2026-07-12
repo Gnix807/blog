@@ -22,7 +22,7 @@ export default defineAppConfig({
 	friendCircleApi: '',
 
 	/** B站追番：你的 B站 UID（个人空间数字ID），追番列表需公开；留空则显示提示 */
-	biliUid: '',
+	biliUid: '96621291',
 	/** 可选：B站追番代理接口（构建时直连被风控时改用，返回 B站原始 JSON）；留空则直连官方接口 */
 	biliApi: '',
 
