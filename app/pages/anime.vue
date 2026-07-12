@@ -68,7 +68,7 @@ const filteredList = computed(() => {
 	return filter.value ? all.filter(i => i.follow_status === filter.value) : all
 })
 
-const { page, totalPages, listPaged: list } = usePagination(filteredList, { perPage: 24 })
+const { page, totalPages, listPaged: list } = usePagination(filteredList, { perPage: 25 })
 watch(filter, () => {
 	page.value = 1
 })
