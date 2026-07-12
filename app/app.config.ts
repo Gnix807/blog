@@ -24,6 +24,11 @@ export default defineAppConfig({
 	/** Bangumi 用户名/UID，用于番剧页拉取收藏；留空则显示提示 */
 	bangumiUser: '',
 
+	/** Steam 拥有游戏 API 接口（自建代理，返回 IPlayerService/GetOwnedGames 格式 JSON）；留空则显示部署提示 */
+	steamApi: '',
+	/** Steam 个人主页链接，可选 */
+	steamProfile: '',
+
 	component: {
 		alert: {
 			/** 默认使用卡片风格还是扁平风格 */
