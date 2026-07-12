@@ -4,7 +4,8 @@ description: 多年后，T城一中废弃了。围墙风化酥脆，老妇人翻
 date: 2026-05-28 00:00:00
 updated: 2026-05-28 00:00:00
 image:
-categories: [小说]
+type: story
+categories: [生活]
 tags: [短篇, 乡土]
 references:
   - title: 在线查看原网页
