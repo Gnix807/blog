@@ -75,6 +75,11 @@ const sortedGames = computed(() => sort.value === 'recent'
 	: orderBy(games.value, ['playtimeForever'], ['desc']),
 )
 
+const { page, totalPages, listPaged: pagedGames } = usePagination(sortedGames, { perPage: 20 })
+watch(sort, () => {
+	page.value = 1
+})
+
 function hours(minutes?: number) {
 	return ((minutes ?? 0) / 60).toFixed(1)
 }
@@ -126,7 +131,7 @@ function capsule(game: SteamGame) {
 
 		<TransitionGroup name="float-in" tag="div" class="game-list">
 			<UtilLink
-				v-for="game in sortedGames"
+				v-for="game in pagedGames"
 				:key="game.appid"
 				:to="`https://store.steampowered.com/app/${game.appid}`"
 				class="game-card card"
@@ -146,6 +151,8 @@ function capsule(game: SteamGame) {
 				</div>
 			</UtilLink>
 		</TransitionGroup>
+
+		<ZPagination v-if="totalPages > 1" v-model="page" :total-pages="totalPages" />
 	</template>
 </div>
 </template>
@@ -221,7 +228,11 @@ function capsule(game: SteamGame) {
 .game-list {
 	display: grid;
 	gap: 0.8rem;
-	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+
+	@media (max-width: $breakpoint-phone) {
+		grid-template-columns: minmax(0, 1fr);
+	}
 }
 
 .game-card {
