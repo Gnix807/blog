@@ -46,6 +46,7 @@ function getArticleYear(article: ArticleProps) {
 
 <template>
 <template #aside>
+	<WidgetFeaturedArticlesCarousel />
 	<WidgetBlogStats />
 	<WidgetBlogLog />
 </template>
