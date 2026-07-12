@@ -36,10 +36,12 @@ references:
 
 还要准备一个你喜欢用的视频编辑软件，如果你没有喜欢的，这里是几个推荐：
 
+::card-list
 - 个人版免费的专业软件：**Davinci Resolve**（全平台）
 - 已经在用苹果的话：**Final Cut Pro X**（Mac 独占）
 - 不想费脑子了：**剪映 / 必剪**（仅推荐在 Windows 上使用）
 - **🅱️lender**（全平台）
+::
 
 ## 二、最简流程
 
@@ -79,9 +81,27 @@ references:
 
 先推荐几个比现编更好的 Aegisub 教程：
 
-- [Aegisub 团队的官方使用文档](https://aegi.vmoe.info/docs/3.2/Main_Page/)（官网链接疑似失效，转用字幕组非官方手册代替）
-- [星空凛脂前辈的教程](https://www.bilibili.com/video/BV1oK411T7kL/)
-- [站内很早就有的教程，专门介绍了 Medusa 快捷键](https://www.bilibili.com/video/BV1ps411b7as)
+::link-card
+---
+title: Aegisub 团队的官方使用文档
+description: （官网链接疑似失效，转用字幕组非官方手册代替）
+link: https://aegi.vmoe.info/docs/3.2/Main_Page/
+---
+::
+
+::link-card
+---
+title: 星空凛脂前辈的教程
+link: https://www.bilibili.com/video/BV1oK411T7kL/
+---
+::
+
+::link-card
+---
+title: 站内很早就有的教程，专门介绍了 Medusa 快捷键
+link: https://www.bilibili.com/video/BV1ps411b7as
+---
+::
 
 **制作时间轴这一步骤本文将使用 Arctime Pro 来举例说明。** 可查看[官网使用文档](https://arctime.org/guide.html)。
 
