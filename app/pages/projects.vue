@@ -1,11 +1,25 @@
 <script setup lang="ts">
-import { projects } from '~/projects'
+import type { ProjectRelation } from '~/projects'
+import { projects, relationLabels } from '~/projects'
 
 const appConfig = useAppConfig()
 useSeoMeta({
 	title: '项目',
-	description: `${appConfig.author.name}的项目与常用工具展示。`,
+	description: `${appConfig.author.name}参与、创建与设计的项目作品。`,
 })
+
+const relation = ref<ProjectRelation | 'all'>('all')
+const view = ref<'gallery' | 'list'>('gallery')
+
+const tabs = computed(() => [
+	{ key: 'all' as const, label: '全部' },
+	...(Object.keys(relationLabels) as ProjectRelation[]).map(key => ({ key, label: relationLabels[key] })),
+])
+
+const filtered = computed(() => relation.value === 'all'
+	? projects
+	: projects.filter(p => p.relation === relation.value),
+)
 
 function isImgIcon(icon?: string) {
 	return !!icon && (/^https?:\/\//.test(icon) || icon.startsWith('/'))
@@ -19,39 +33,52 @@ function isImgIcon(icon?: string) {
 </template>
 
 <div class="projects-page">
-	<h1 class="projects-heading text-creative">
-		项目
-	</h1>
-
-	<section v-for="category in projects" :key="category.title" class="project-category">
-		<h2 class="category-title text-creative">
-			{{ category.title }}
-		</h2>
-		<div class="project-grid">
-			<UtilLink
-				v-for="item in category.items"
-				:key="item.name"
-				:to="item.link"
-				class="project-card card"
-				:title="joinWith([item.name, item.description, item.link])"
+	<div class="projects-toolbar">
+		<div class="project-tabs">
+			<button
+				v-for="tab in tabs"
+				:key="tab.key"
+				class="project-tab"
+				:class="{ active: relation === tab.key }"
+				@click="relation = tab.key"
 			>
-				<div class="project-head">
-					<UtilImg v-if="isImgIcon(item.icon)" class="project-icon" :src="item.icon!" />
-					<Icon v-else-if="item.icon" class="project-icon" :name="item.icon" />
-					<div class="project-name">
-						{{ item.name }}
-					</div>
-					<span v-if="item.status" class="project-status">{{ item.status }}</span>
-				</div>
-				<p class="project-desc">
-					{{ item.description }}
-				</p>
-				<div v-if="item.tags?.length" class="project-tags">
-					<span v-for="tag in item.tags" :key="tag" class="project-tag">{{ tag }}</span>
-				</div>
-			</UtilLink>
+				{{ tab.label }}
+			</button>
 		</div>
-	</section>
+		<div class="view-toggle">
+			<button :class="{ active: view === 'gallery' }" aria-label="画廊" @click="view = 'gallery'">
+				<Icon name="tabler:layout-grid" />
+			</button>
+			<button :class="{ active: view === 'list' }" aria-label="列表" @click="view = 'list'">
+				<Icon name="tabler:list" />
+			</button>
+		</div>
+	</div>
+
+	<TransitionGroup tag="div" class="project-container" :class="`view-${view}`" name="float-in">
+		<UtilLink
+			v-for="item in filtered"
+			:key="item.name"
+			:to="item.link"
+			class="project-card card"
+			:title="joinWith([item.name, item.description, item.link])"
+		>
+			<div class="project-head">
+				<UtilImg v-if="isImgIcon(item.icon)" class="project-icon" :src="item.icon!" />
+				<Icon v-else-if="item.icon" class="project-icon" :name="item.icon" />
+				<h3 class="project-name">
+					{{ item.name }}
+				</h3>
+			</div>
+			<div class="project-badges">
+				<span v-if="item.type" class="badge type">{{ item.type }}</span>
+				<span class="badge relation">{{ relationLabels[item.relation] }}</span>
+			</div>
+			<p class="project-desc">
+				{{ item.description }}
+			</p>
+		</UtilLink>
+	</TransitionGroup>
 </div>
 </template>
 
@@ -60,25 +87,76 @@ function isImgIcon(icon?: string) {
 	padding: 1rem;
 }
 
-.projects-heading {
-	font-size: 1.5em;
-	margin-bottom: 1rem;
+.projects-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem 1rem;
+	margin-bottom: 1.2rem;
 }
 
-.project-category {
-	margin-bottom: 2rem;
+.project-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
 
-	.category-title {
-		margin-bottom: 1rem;
-		font-size: 1.1em;
+	.project-tab {
+		padding: 0.3em 0.8em;
+		border-radius: 1em;
+		font-size: 0.85em;
 		color: var(--c-text-2);
+		transition: all 0.2s;
+
+		&:hover {
+			background-color: var(--c-bg-soft);
+			color: var(--c-text);
+		}
+
+		&.active {
+			background-color: var(--c-primary-soft);
+			color: var(--c-primary);
+		}
 	}
 }
 
-.project-grid {
-	display: grid;
-	gap: 0.8rem;
-	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+.view-toggle {
+	display: flex;
+	gap: 2px;
+	padding: 2px;
+	border: 1px solid var(--c-border);
+	border-radius: 0.5em;
+
+	button {
+		display: flex;
+		padding: 0.3em 0.6em;
+		border-radius: 0.4em;
+		color: var(--c-text-3);
+		transition: all 0.2s;
+
+		&:hover {
+			color: var(--c-text);
+		}
+
+		&.active {
+			background-color: var(--c-bg-soft);
+			color: var(--c-primary);
+		}
+	}
+}
+
+.project-container {
+	&.view-gallery {
+		display: grid;
+		gap: 0.8rem;
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	}
+
+	&.view-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
 }
 
 .project-card {
@@ -98,26 +176,40 @@ function isImgIcon(icon?: string) {
 		gap: 0.5rem;
 
 		.project-icon {
-			width: 1.8rem;
-			height: 1.8rem;
+			width: 1.6rem;
+			height: 1.6rem;
 			border-radius: 0.4rem;
 			object-fit: cover;
-			font-size: 1.8rem;
+			font-size: 1.6rem;
 			color: var(--c-primary);
 		}
 
 		.project-name {
-			flex-grow: 1;
-			font-weight: 600;
+			margin: 0;
+			font-size: 1.05em;
 			color: var(--c-text);
 		}
+	}
 
-		.project-status {
+	.project-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4em;
+
+		.badge {
 			padding: 0.1em 0.5em;
-			border-radius: 1em;
-			background-color: var(--c-primary-soft);
-			font-size: 0.7em;
-			color: var(--c-primary);
+			border-radius: 0.4em;
+			font-size: 0.72em;
+
+			&.type {
+				background-color: var(--c-bg-2);
+				color: var(--c-text-2);
+			}
+
+			&.relation {
+				background-color: var(--c-primary-soft);
+				color: var(--c-primary);
+			}
 		}
 	}
 
@@ -127,19 +219,32 @@ function isImgIcon(icon?: string) {
 		line-height: 1.5;
 		color: var(--c-text-2);
 	}
+}
 
-	.project-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4em;
+// 列表视图下横向紧凑排布
+.view-list .project-card {
+	display: grid;
+	align-items: center;
+	gap: 0.3rem 1rem;
+	grid-template-columns: auto 1fr;
 
-		.project-tag {
-			padding: 0.1em 0.5em;
-			border-radius: 0.4em;
-			background-color: var(--c-bg-2);
-			font-size: 0.72em;
-			color: var(--c-text-3);
-		}
+	.project-head {
+		grid-column: 1;
+	}
+
+	.project-badges {
+		grid-column: 2;
+		grid-row: 1;
+		justify-content: flex-end;
+	}
+
+	.project-desc {
+		grid-column: 1 / -1;
+	}
+
+	&:hover {
+		transform: none;
+		background-color: var(--c-bg-soft);
 	}
 }
 </style>
