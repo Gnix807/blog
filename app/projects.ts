@@ -42,14 +42,6 @@ export const projects: ProjectItem[] = [
 		icon: 'tabler:notebook',
 	},
 	{
-		name: '字幕存档 SubtitleArchive',
-		description: '字幕存档项目，现已开源。',
-		link: 'https://github.com/Gnix807/SubtitleArchive',
-		type: 'project',
-		relation: 'created',
-		icon: 'tabler:file-text',
-	},
-	{
 		name: 'Clarity 主题',
 		description: '本站使用的开源博客主题，做了大量个性化功能扩展。',
 		link: 'https://github.com/L33Z22L11/blog-v3',
