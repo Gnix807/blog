@@ -52,6 +52,7 @@
     "parse-domain": "catalog:util",
     "pinia": "catalog:framework",
     "plain-shiki": "catalog:content",
+    "sandpack-vue3": "^3.1.12",
     "shiki": "catalog:content",
     "site-config-stack": "catalog:util",
     "temporal-polyfill": "catalog:util",
