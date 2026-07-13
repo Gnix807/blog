@@ -13,17 +13,25 @@ export default defineEventHandler(async (event) => {
 	}
 
 	const contentRoot = resolve('content')
-	const requestedDir = resolve(join('content', dir))
+	const sandpackRoot = resolve('sandpack-demos')
 
-	if (!requestedDir.startsWith(contentRoot)) {
-		throw createError({ statusCode: 403, message: 'Access denied' })
+	const tryDirs = [resolve(join('sandpack-demos', dir)), resolve(join('content', dir))]
+
+	let entries: any[] | undefined
+	for (const requestedDir of tryDirs) {
+		if (!requestedDir.startsWith(sandpackRoot) && !requestedDir.startsWith(contentRoot)) {
+			throw createError({ statusCode: 403, message: 'Access denied' })
+		}
+		try {
+			entries = await readdir(requestedDir, { withFileTypes: true })
+			break
+		}
+		catch {
+			// try next directory
+		}
 	}
 
-	let entries
-	try {
-		entries = await readdir(requestedDir, { withFileTypes: true })
-	}
-	catch {
+	if (!entries) {
 		throw createError({ statusCode: 404, message: 'Directory not found' })
 	}
 
