@@ -1236,7 +1236,7 @@ openInNewTab: true          # link 是否新标签打开，默认 true
 
 ::tab{:tabs='["组件","语法"]'}
 #tab1
-::sandpack-embed
+::sandpack
 ---
 dir: demo
 template: vue3
@@ -1245,7 +1245,7 @@ template: vue3
 
 #tab2
 ```mdc
-::sandpack-embed
+::sandpack
 ---
 dir: demo
 template: vue3
