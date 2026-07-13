@@ -1240,6 +1240,7 @@ openInNewTab: true          # link 是否新标签打开，默认 true
 ---
 dir: demo
 template: vue3
+title: Vue 计数器演示
 ---
 ::
 
@@ -1249,6 +1250,7 @@ template: vue3
 ---
 dir: demo
 template: vue3
+title: Vue 计数器演示
 ---
 ::
 ```
