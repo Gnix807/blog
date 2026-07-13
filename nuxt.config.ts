@@ -33,7 +33,7 @@ export default defineNuxtConfig({
 				{ rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css', media: 'print', onload: 'this.media="all"' },
 				// "JetBrains Mono", 思源宋体 "Noto Serif SC"
 				{ rel: 'preconnect', href: 'https://fonts.gstatic.cn', crossorigin: '' },
-				{ rel: 'stylesheet', href: 'https://fonts.googleapis.cn/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Serif+SC:wght@200..900&display=swap', media: 'print', onload: 'this.media="all"' },
+				{ rel: 'stylesheet', href: 'https://fonts.googleapis.cn/css2?family=Barlow+Condensed:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Montserrat:wght@400;600;700;800&family=Noto+Serif+SC:wght@200..900&family=Mi+Sans:wght@400;600;700&display=swap', media: 'print', onload: 'this.media="all"' },
 			],
 			templateParams: {
 				separator: '|',
