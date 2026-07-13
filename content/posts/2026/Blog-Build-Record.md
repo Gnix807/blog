@@ -1,8 +1,8 @@
 ---
 title: 个人博客搭建全记录：从 Fork 到上线
 description: 从 Fork Clarity 主题、逐项自定义站点信息、接入统计评论，到 1Panel 部署上线——记录了搭建这个博客的全过程与踩过的坑。
-date: 2026-07-13 00:00:00
-updated: 2026-07-13 00:00:00
+date: 2026-07-10 16:00:00
+updated: 2026-07-10 16:00:00
 image:
 categories: [杂谈]
 tags: [博客, Nuxt, Clarity, 建站, 1Panel]

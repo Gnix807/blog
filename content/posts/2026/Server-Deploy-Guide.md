@@ -1,8 +1,8 @@
 ---
 title: 雨云 + 1Panel 服务器部署实战
 description: 从购买服务器、安装 1Panel 面板，到创建网站、配置 HTTPS、设置 Git 自动部署——一台 Debian 服务器的完整上手记录。
-date: 2026-07-13 00:00:00
-updated: 2026-07-13 00:00:00
+date: 2026-07-10 14:00:00
+updated: 2026-07-10 14:00:00
 image:
 categories: [技术]
 tags: [服务器, 1Panel, 雨云, 部署, Linux]
@@ -12,7 +12,7 @@ tags: [服务器, 1Panel, 雨云, 部署, Linux]
 
 ## 前言
 
-不管是搭博客、跑项目、还是放 API，总得有个地方跑。虚拟主机太受限，大厂云太贵，几经对比选了**雨云**的 VPS + **1Panel** 面板——价格适中、国产面板上手快、社区活跃。这篇文章记一下从买机器到部署上线的完整流程。
+除了这个博客，我还有一个基于 Halo 的主站。两台机器都是同样的搭配——**雨云 VPS + 1Panel 面板**——价格适中、国产面板上手快、社区活跃。这篇文章记一下从买机器到部署上线的完整流程。想了解这个 Nuxt 博客是怎么从 Fork 到上线的，可以看[《个人博客搭建全记录》](/2026/blog-build-record)。
 
 ::alert{type="info"}
 本文以 **Debian 12** 为例。雨云默认提供的就是 Debian，如果你用 Ubuntu 或其他发行版，命令基本通用。
@@ -30,7 +30,7 @@ tags: [服务器, 1Panel, 雨云, 部署, Linux]
 
 ## 第一步：买机器 + 初始设置
 
-雨云官网 [www.rainyun.com](https://www.rainyun.com) 直接选 VPS。建议：
+[雨云官网](https://www.rainyun.com) 直接选 VPS。建议：
 
 - **系统**：Debian 12（稳定性好、包新）
 - **配置**：1 核 2G 起，跑博客 + Nginx ✅，如果想跑数据库或 Docker 建议上 2 核 4G
