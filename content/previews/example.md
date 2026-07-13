@@ -1229,6 +1229,32 @@ openInNewTab: true          # link 是否新标签打开，默认 true
 ```
 ::
 
+
+### SandpackEmbed
+
+> 在线可编辑运行的代码沙盒，适合前端教程嵌入演示代码。代码放 `sandpack-demos/<name>/` 目录下。
+
+::tab{:tabs='["组件","语法"]'}
+#tab1
+::sandpack-embed
+---
+dir: demos/demo
+template: vue3
+---
+::
+
+#tab2
+```mdc
+::sandpack-embed
+---
+dir: demos/demo
+template: vue3
+---
+::
+```
+::
+
+
 ## 组件使用方法
 
 一是看开头提到的 MDC 文档，至关重要。二是看使用组件对应的源代码 (`example.md`)，也很重要。三是看我文章的调用方式，没有就慎用。
