@@ -18,12 +18,14 @@ export default defineEventHandler(async (event) => {
 	const tryDirs = [resolve(join('sandpack-demos', dir)), resolve(join('content', dir))]
 
 	let entries: any[] | undefined
+	let matchedDir = ''
 	for (const requestedDir of tryDirs) {
 		if (!requestedDir.startsWith(sandpackRoot) && !requestedDir.startsWith(contentRoot)) {
 			throw createError({ statusCode: 403, message: 'Access denied' })
 		}
 		try {
 			entries = await readdir(requestedDir, { withFileTypes: true })
+			matchedDir = requestedDir
 			break
 		}
 		catch {
@@ -40,7 +42,7 @@ export default defineEventHandler(async (event) => {
 		entries
 			.filter(e => e.isFile() && ALLOWED_EXTENSIONS.has(extname(e.name)) && !EXCLUDED_FILES.has(e.name))
 			.map(async (entry) => {
-				const content = await readFile(join(requestedDir, entry.name), 'utf-8')
+				const content = await readFile(join(matchedDir, entry.name), 'utf-8')
 				files[`/${entry.name}`] = content
 			}),
 	)
