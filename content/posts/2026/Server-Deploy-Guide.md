@@ -66,7 +66,7 @@ curl -sSL https://resource.fit2cloud.com/1panel/package/quick_start.sh -o quick_
 
 这是最核心的操作，也是 1Panel 比命令行方便的地方。
 
-**3.1 新建站点**：左侧「网站」→ 右上角「创建网站」→ 类型选**静态网站**，填域名如 `blog.gnix807.top`，端口默认 80。
+**3.1 新建站点**：左侧「网站」→ 右上角「创建网站」→ 类型选**静态网站**，填你的域名，端口默认 80。
 
 **3.2 上传文件**：1Panel 自带文件管理器，可以把你的网站文件上传到站点根目录。如果你是用 `pnpm generate` 构建的静态站，产物的 `.output/public/` 整个文件夹扔进去就行。
 
@@ -115,8 +115,8 @@ corepack prepare pnpm@11.8.0 --activate
 
 ```bash
 cd /opt
-git clone https://github.com/Gnix807/blog.git blog-src
-cd blog-src
+git clone https://github.com/你的用户名/你的仓库.git my-site
+cd my-site
 pnpm install
 ```
 
@@ -125,19 +125,19 @@ pnpm install
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-cd /opt/blog-src
+cd /opt/my-site
 git pull
 pnpm install --frozen-lockfile
 npx nuxi generate
-rm -rf /opt/1panel/www/sites/blog.gnix807.top/index/*
-cp -r .output/public/. /opt/1panel/www/sites/blog.gnix807.top/index/
+rm -rf /opt/1panel/www/sites/你的域名/index/*
+cp -r .output/public/. /opt/1panel/www/sites/你的域名/index/
 echo "部署完成"
 ```
 
 以后更新博客只需要：
 
 ```bash
-cd /opt/blog-src && bash deploy.sh
+cd /opt/my-site && bash deploy.sh
 ```
 
 一条命令，拉代码 → 构建 → 拷贝到站点目录，全程自动化。
