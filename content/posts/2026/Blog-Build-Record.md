@@ -20,7 +20,7 @@ tags: [博客, Nuxt, Clarity, 建站, 1Panel]
 
 ## 起点：为什么要自己搭
 
-其实本来有一个基于 Halo 的个人主站（[www.gnix807.cn](https://www.gnix807.cn)），日常写文章、发动态都在那边。但 Halo 毕竟是个 CMS，重、依赖 Java 运行时、一些定制不够灵活。想有一个**更轻、更可控、能当静态站部署**的地方，专门放那些需要精心排版的长文。
+其实本来有一个基于 Halo 的个人主站，日常写文章、发动态都在那边。但 Halo 毕竟是个 CMS，重、依赖 Java 运行时、一些定制不够灵活。想有一个**更轻、更可控、能当静态站部署**的地方，专门放那些需要精心排版的长文。
 
 需求很明确：
 
@@ -63,13 +63,7 @@ Clarity 默认只有「文章」「友链」「归档」三个入口。我逐步
 
 ### 统计和评论
 
-这是接入外部服务最多的部分：
-
-- **Umami 统计**：自建在 `umami.gnix807.cn`，把 JS 脚本和 website-id 填进 `blog.config.ts` 的 `scripts` 数组
-- **Cloudflare Web Analytics**：同理，替换成自己的 beacon token
-- **Twikoo 评论**：自建在 `twikoo.gnix807.cn`，改 `twikoo.envId` 和 `twikoo.preload`
-
-三个服务都是**浏览器端加载的**，构建时不需要它们可达。所以即使博客是纯静态站，这些动态功能一样能用——评论和统计的 JS 是用户浏览器自己去请求的，不经过服务器。
+这部分主要是接入外部服务。用了 Umami（自建统计分析）、Cloudflare Web Analytics（辅助统计）和 Twikoo（评论系统）。都是**浏览器端加载**的——把 JS 脚本和对应的 ID/Token 填进 `blog.config.ts` 的 `scripts` 数组，构建时不需要它们可达。所以即使博客是纯静态站，这些动态功能一样能用——评论和统计的 JS 是用户浏览器自己去请求的，不经过服务器。
 
 ### 友链系统
 
@@ -120,7 +114,7 @@ Nuxt Content v3 需要 Node 22.5+ 才支持 `node:sqlite`。服务器初始是 N
 
 ### 坑 4：GitHub 图在服务器上超时
 
-首页即刻卡片引用了 `raw.githubusercontent.com` 的冰山图截图。本地好好的，服务器一构建就卡住——因为雨云在国内，GitHub 的 raw 域名经常不可达。后来把图片移到了自己的图床（`img.gnix807.cn`）才稳定。
+首页即刻卡片引用了 `raw.githubusercontent.com` 的冰山图截图。本地好好的，服务器一构建就卡住——因为雨云在国内，GitHub 的 raw 域名经常不可达。后来把图片移到了自己的图床才稳定。
 
 ### 坑 5：Prerender 外链超时
 
