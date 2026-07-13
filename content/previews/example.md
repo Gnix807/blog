@@ -1238,7 +1238,7 @@ openInNewTab: true          # link 是否新标签打开，默认 true
 #tab1
 ::sandpack-embed
 ---
-dir: demos/demo
+dir: demo
 template: vue3
 ---
 ::
@@ -1247,7 +1247,7 @@ template: vue3
 ```mdc
 ::sandpack-embed
 ---
-dir: demos/demo
+dir: demo
 template: vue3
 ---
 ::
