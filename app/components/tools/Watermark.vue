@@ -4,6 +4,7 @@ defineEmits<{ back: [] }>()
 const canvasEl = ref<HTMLCanvasElement>()
 const originalUrl = ref('')
 const resultUrl = ref('')
+const downloading = ref(false)
 const watermarkText = ref('')
 const fontSize = ref(48)
 const opacity = ref(0.3)
@@ -11,7 +12,19 @@ const position = ref<'tl' | 'tr' | 'bl' | 'br' | 'center' | 'tile'>('br')
 const color = ref('#ffffff')
 const rotation = ref(-30)
 const bold = ref(false)
+const exportFormat = ref<'image/png' | 'image/jpeg' | 'image/webp'>('image/png')
 const tileSpacing = ref(200)
+
+const exportExt = computed(() => ({ 'image/jpeg': '.jpg', 'image/webp': '.webp' }[exportFormat.value] || '.png'))
+
+const positionOptions = [
+	{ value: 'tile' as const, label: '平铺' },
+	{ value: 'tl' as const, label: '左上' },
+	{ value: 'tr' as const, label: '右上' },
+	{ value: 'bl' as const, label: '左下' },
+	{ value: 'br' as const, label: '右下' },
+	{ value: 'center' as const, label: '居中' },
+]
 
 let _img: HTMLImageElement | null = null
 
@@ -69,6 +82,15 @@ function applyWatermark() {
 	resultUrl.value = canvas.toDataURL()
 }
 
+function download() {
+	if (!canvasEl.value) return; downloading.value = true
+	canvasEl.value.toBlob((blob) => {
+		if (!blob) return
+		const a = document.createElement('a'); a.href = URL.createObjectURL(blob)
+		a.download = `watermarked${exportExt.value}`; a.click(); downloading.value = false
+	}, exportFormat.value === 'image/png' ? 'image/png' : exportFormat.value, 0.9)
+}
+
 watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSpacing], () => { if (originalUrl.value) applyWatermark() })
 </script>
 
@@ -90,9 +112,36 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 
 	<div class="controls" v-if="originalUrl">
 		<div class="row"><label>水印文字</label><input v-model="watermarkText" type="text" placeholder="输入水印文字" class="text-input"></div>
+
+		<div class="row">
+			<label>水印模式</label>
+			<div class="chips"><button v-for="opt in positionOptions" :key="opt.value" :class="{ active: position === opt.value }" @click="position = opt.value">{{ opt.label }}</button></div>
+		</div>
+
 		<div class="row"><label>字号：{{ fontSize }}px</label><input type="range" min="12" max="200" v-model.number="fontSize" class="slider"></div>
 		<div class="row"><label>旋转：{{ rotation }}°</label><input type="range" min="-90" max="90" v-model.number="rotation" class="slider"></div>
+		<div class="row" v-if="position === 'tile'"><label>平铺间距：{{ tileSpacing }}px</label><input type="range" min="80" max="500" step="10" v-model.number="tileSpacing" class="slider"></div>
 		<div class="row"><label>透明度：{{ Math.round(opacity * 100) }}%</label><input type="range" min="0.05" max="1" step="0.05" v-model.number="opacity" class="slider"></div>
+
+		<div class="row">
+			<label>字体加粗</label>
+			<label class="switch-label"><input type="checkbox" v-model="bold" hidden><span class="track"><span class="thumb" /></span><span class="txt">{{ bold ? '开' : '关' }}</span></label>
+		</div>
+
+		<div class="row">
+			<label>颜色</label>
+			<div class="color-row">
+				<input type="color" v-model="color" class="color-picker">
+				<button v-for="c in ['#ffffff','#000000','#ef4444']" :key="c" class="color-preset" :class="{ active: color === c }" :style="{ background: c }" @click="color = c" />
+			</div>
+		</div>
+
+		<div class="row">
+			<label>导出格式</label>
+			<div class="chips"><button v-for="f in [{ v: 'image/png' as const, l: 'PNG' }, { v: 'image/jpeg' as const, l: 'JPEG' }, { v: 'image/webp' as const, l: 'WebP' }]" :key="f.v" :class="{ active: exportFormat === f.v }" @click="exportFormat = f.v">{{ f.l }}</button></div>
+		</div>
+
+		<button class="download-btn" :disabled="!resultUrl || downloading" @click="download"><Icon name="tabler:download" /><span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span></button>
 	</div>
 </div>
 </template>
@@ -102,8 +151,19 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 .back-link { display: inline-flex; align-items: center; gap: 0.3em; font-size: 0.85em; color: var(--c-text-2); cursor: pointer; margin-bottom: 0.8rem; }
 h1 { margin: 0; font-size: 1.6em; }
 .subtitle { margin: 0.3em 0 1rem; font-size: 0.9em; color: var(--c-text-2); }
-.upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; border: 2px dashed var(--c-border); border-radius: 0.8em; cursor: pointer; margin-bottom: 1rem; .upload-icon { font-size: 2.5em; color: var(--c-text-3); } .upload-hint { margin-top: 0.5em; font-size: 0.9em; color: var(--c-text-3); } .preview-img { max-width: 100%; max-height: 400px; object-fit: contain; } }
-.controls { display: flex; flex-direction: column; gap: 1rem; .row { display: flex; flex-direction: column; gap: 0.3em; label { font-size: 0.85em; color: var(--c-text-2); } } }
+
+.upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; border: 2px dashed var(--c-border); border-radius: 0.8em; cursor: pointer; margin-bottom: 1rem; overflow: hidden; &:hover { border-color: var(--c-primary); background: var(--c-bg-soft); } .upload-icon { font-size: 2.5em; color: var(--c-text-3); } .upload-hint { margin-top: 0.5em; font-size: 0.9em; color: var(--c-text-3); } .preview-img { max-width: 100%; max-height: 400px; object-fit: contain; } }
+
+.controls { display: flex; flex-direction: column; gap: 1rem; }
+.row { display: flex; flex-direction: column; gap: 0.3em; & > label:first-child { font-size: 0.85em; color: var(--c-text-2); } }
 .text-input { padding: 0.5em 0.7em; border: 1px solid var(--c-border); border-radius: 0.4em; background: var(--c-bg); color: var(--c-text); font-size: 0.95em; outline: none; &:focus { border-color: var(--c-primary); } }
 .slider { width: 100%; accent-color: var(--c-primary); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.3em; button { padding: 0.4em 1em; border: 1px solid var(--c-border); border-radius: 0.4em; font-size: 0.9em; color: var(--c-text-2); background: transparent; cursor: pointer; transition: all 0.2s; &:hover { border-color: var(--c-primary); } &.active { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-primary); } } }
+
+.color-row { display: flex; align-items: center; gap: 0.4em; .color-picker { width: 36px; height: 36px; border: none; border-radius: 0.4em; cursor: pointer; padding: 2px; } .color-preset { width: 28px; height: 28px; border: 2px solid var(--c-border); border-radius: 50%; cursor: pointer; &.active { border-color: var(--c-primary); } } }
+
+.switch-label { display: inline-flex; align-items: center; gap: 0.5em; cursor: pointer; .track { position: relative; width: 40px; height: 22px; border-radius: 11px; background: var(--c-border); .thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; } } input:checked + .track { background: var(--c-primary); .thumb { transform: translateX(18px); } } .txt { font-size: 0.85em; color: var(--c-text-2); } }
+
+.download-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4em; padding: 0.6em 1.5em; border-radius: 0.5em; background: var(--c-primary); color: #fff; font-size: 0.95em; cursor: pointer; border: none; &:hover { opacity: 0.9; } &:disabled { opacity: 0.5; cursor: not-allowed; } }
 </style>
