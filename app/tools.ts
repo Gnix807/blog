@@ -17,7 +17,7 @@ export const tools: ToolItem[] = [
 	{
 		name: '图片水印',
 		description: '上传图片，添加文字水印。可调节位置、大小、透明度。',
-		icon: 'tabler:stamp',
+		icon: 'tabler:photo',
 		route: '/tools/watermark',
 		category: 'image',
 	},
