@@ -57,6 +57,11 @@ function back() { activeTool.value = null }
 
 <ToolsConvert v-else-if="activeTool === '图片格式转换'" @back="back" />
 <ToolsWatermark v-else-if="activeTool === '图片水印'" @back="back" />
+<ToolsBase64 v-else-if="activeTool === 'Base64 编解码'" @back="back" />
+<ToolsUrlEncoder v-else-if="activeTool === 'URL 编解码'" @back="back" />
+<ToolsJsonFormatter v-else-if="activeTool === 'JSON 格式化'" @back="back" />
+<ToolsUuidGenerator v-else-if="activeTool === 'UUID 生成器'" @back="back" />
+<ToolsTimestampConverter v-else-if="activeTool === '时间戳转换'" @back="back" />
 </template>
 
 <style lang="scss" scoped>
