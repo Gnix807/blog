@@ -72,7 +72,16 @@ function back() {
 
 <!-- Tool detail -->
 <ToolsConvert v-else-if="activeTool === '图片格式转换'" @back="back" />
-<ToolsWatermark v-else-if="activeTool === '图片水印'" @back="back" />
+
+<!-- Tool watermark inline test -->
+<div v-else-if="activeTool === '图片水印'" class="tool-page">
+	<button class="back-link" @click="back">
+		<Icon name="tabler:arrow-left" /><span>工具箱</span>
+	</button>
+	<h1>图片水印</h1>
+	<p class="subtitle">测试：上传图片看是否生效</p>
+	<input type="file" accept="image/*" @change="(e) => { const f = (e.target as HTMLInputElement).files?.[0]; console.log('file:', f?.name); if (f) alert('选中: ' + f.name) }">
+</div>
 </template>
 
 <style lang="scss" scoped>
