@@ -4,8 +4,10 @@ const input = ref('')
 const output = ref('')
 const error = ref('')
 const indent = ref(2)
+const action = ref<'format' | 'compact' | 'sort'>('format')
 
-function format() {
+function doFormat() {
+	action.value = 'format'
 	error.value = ''
 	if (!input.value.trim()) { output.value = ''; return }
 	try {
@@ -17,6 +19,7 @@ function format() {
 }
 
 function doCompact() {
+	action.value = 'compact'
 	error.value = ''
 	if (!input.value.trim()) { output.value = ''; return }
 	try {
@@ -28,6 +31,7 @@ function doCompact() {
 }
 
 function doSort() {
+	action.value = 'sort'
 	error.value = ''
 	if (!input.value.trim()) { output.value = ''; return }
 	try {
@@ -47,7 +51,7 @@ function sortKeys(obj: any): any {
 	return obj
 }
 
-watchEffect(() => { if (input.value) format() })
+watchEffect(() => { if (input.value) doFormat() })
 </script>
 
 <template>
@@ -56,9 +60,9 @@ watchEffect(() => { if (input.value) format() })
 	<h1 style="margin:0;font-size:1.6em">JSON 格式化</h1>
 	<p style="margin:0.3em 0 1rem;font-size:0.9em;color:var(--c-text-2)">纯浏览器端，数据不上传。</p>
 	<div style="display:flex;flex-wrap:wrap;gap:0.3em;margin-bottom:0.8rem">
-		<button @click="format" style="padding:0.4em 1em;border:1px solid var(--c-border);border-radius:0.4em;background:var(--c-primary-soft);color:var(--c-primary);cursor:pointer">格式化</button>
-		<button @click="doCompact" style="padding:0.4em 1em;border:1px solid var(--c-border);border-radius:0.4em;cursor:pointer;color:var(--c-text-2);background:transparent">压缩</button>
-		<button @click="doSort" style="padding:0.4em 1em;border:1px solid var(--c-border);border-radius:0.4em;cursor:pointer;color:var(--c-text-2);background:transparent">按 key 排序</button>
+		<button @click="doFormat" :style="{ padding:'0.4em 1em', border:'1px solid var(--c-border)', borderRadius:'0.4em', cursor:'pointer', background: action==='format'?'var(--c-primary-soft)':'transparent', color: action==='format'?'var(--c-primary)':'var(--c-text-2)', transition:'all 0.15s' }">格式化</button>
+		<button @click="doCompact" :style="{ padding:'0.4em 1em', border:'1px solid var(--c-border)', borderRadius:'0.4em', cursor:'pointer', background: action==='compact'?'var(--c-primary-soft)':'transparent', color: action==='compact'?'var(--c-primary)':'var(--c-text-2)', transition:'all 0.15s' }">压缩</button>
+		<button @click="doSort" :style="{ padding:'0.4em 1em', border:'1px solid var(--c-border)', borderRadius:'0.4em', cursor:'pointer', background: action==='sort'?'var(--c-primary-soft)':'transparent', color: action==='sort'?'var(--c-primary)':'var(--c-text-2)', transition:'all 0.15s' }">按 key 排序</button>
 		<select v-model.number="indent" style="padding:0.4em;border:1px solid var(--c-border);border-radius:0.4em;background:var(--c-bg);color:var(--c-text);font-size:0.9em">
 			<option :value="2">2 空格</option>
 			<option :value="4">4 空格</option>
