@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineEmits<{ back: [] }>()
+
 const inputEl = ref<HTMLInputElement>()
 const canvasEl = ref<HTMLCanvasElement>()
 const format = ref<'image/webp' | 'image/png' | 'image/jpeg'>('image/webp')
@@ -68,10 +70,10 @@ function formatBytes(bytes: number) {
 <template>
 <div class="tool-page">
 	<div class="tool-topbar">
-		<NuxtLink to="/tools" class="back-link">
+		<button class="back-link" @click="$emit('back')">
 			<Icon name="tabler:arrow-left" />
 			<span>工具箱</span>
-		</NuxtLink>
+		</button>
 	</div>
 	<h1>图片格式转换</h1>
 	<p class="subtitle">纯浏览器端运行，图片不会上传。支持 WebP / PNG / JPEG 互转。</p>

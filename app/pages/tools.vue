@@ -7,6 +7,8 @@ useSeoMeta({
 	description: '一些实用的小工具，纯前端运行，数据不离开你的浏览器。',
 })
 
+const activeTool = ref<string | null>(null)
+
 const category = ref<ToolItem['category'] | 'all'>('all')
 
 const tabs = computed(() => [
@@ -21,6 +23,14 @@ const filtered = computed(() =>
 		? tools
 		: tools.filter(t => t.category === category.value),
 )
+
+function openTool(name: string) {
+	activeTool.value = name
+}
+
+function back() {
+	activeTool.value = null
+}
 </script>
 
 <template>
@@ -29,10 +39,11 @@ const filtered = computed(() =>
 	<WidgetBlogStats />
 </template>
 
-<div class="tools-page">
+<!-- Tool list -->
+<div v-if="!activeTool" class="tools-page">
 	<header class="tools-header">
 		<h1>工具箱</h1>
-		<p>一些实用的小工具，纯前端运行，数据不离开你的浏览器。没有广告，没有上传。</p>
+		<p>一些实用的小工具，纯前端运行，数据不离开你的浏览器。</p>
 	</header>
 
 	<div class="tools-tabs">
@@ -48,116 +59,57 @@ const filtered = computed(() =>
 	</div>
 
 	<TransitionGroup tag="div" class="tools-grid" name="float-in">
-		<NuxtLink v-for="item in filtered" :key="item.name" :to="item.route" class="tool-card card">
+		<button v-for="item in filtered" :key="item.name" class="tool-card card" @click="openTool(item.name)">
 			<div class="tool-head">
 				<Icon class="tool-icon" :name="item.icon" />
 				<h3 class="tool-name">{{ item.name }}</h3>
 			</div>
 			<p class="tool-desc">{{ item.description }}</p>
 			<span class="tool-category">{{ categoryLabels[item.category] }}</span>
-		</NuxtLink>
+		</button>
 	</TransitionGroup>
 </div>
+
+<!-- Tool detail -->
+<ToolsConvert v-else-if="activeTool === '图片格式转换'" @back="back" />
+<ToolsWatermark v-else-if="activeTool === '图片水印'" @back="back" />
 </template>
 
 <style lang="scss" scoped>
-.tools-page {
-	padding: 1rem;
-}
+.tools-page { padding: 1rem; }
 
 .tools-header {
 	margin-bottom: 1rem;
-
-	h1 {
-		margin: 0;
-		font-size: 1.8em;
-	}
-
-	p {
-		margin: 0.3em 0 0;
-		color: var(--c-text-2);
-		font-size: 0.9em;
-	}
+	h1 { margin: 0; font-size: 1.8em; }
+	p { margin: 0.3em 0 0; color: var(--c-text-2); font-size: 0.9em; }
 }
 
 .tools-tabs {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.3rem;
-	margin-bottom: 1.2rem;
-
+	display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 1.2rem;
 	.tool-tab {
-		padding: 0.3em 0.8em;
-		border-radius: 1em;
-		font-size: 0.85em;
-		color: var(--c-text-2);
-		transition: all 0.2s;
-
-		&:hover {
-			background-color: var(--c-bg-soft);
-			color: var(--c-text);
-		}
-
-		&.active {
-			background-color: var(--c-primary-soft);
-			color: var(--c-primary);
-		}
+		padding: 0.3em 0.8em; border-radius: 1em; font-size: 0.85em;
+		color: var(--c-text-2); transition: all 0.2s;
+		&:hover { background-color: var(--c-bg-soft); color: var(--c-text); }
+		&.active { background-color: var(--c-primary-soft); color: var(--c-primary); }
 	}
 }
 
 .tools-grid {
-	display: grid;
-	gap: 0.8rem;
+	display: grid; gap: 0.8rem;
 	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
 
 .tool-card {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-	padding: 1rem;
-	text-decoration: none;
+	position: relative; display: flex; flex-direction: column; gap: 0.5rem;
+	padding: 1rem; text-align: start; cursor: pointer;
 	transition: transform 0.2s, box-shadow 0.2s;
-
-	&:hover {
-		transform: translateY(-3px);
-		box-shadow: var(--box-shadow-3);
-	}
-
+	&:hover { transform: translateY(-3px); box-shadow: var(--box-shadow-3); }
 	.tool-head {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-
-		.tool-icon {
-			font-size: 1.5em;
-			color: var(--c-primary);
-			flex-shrink: 0;
-		}
-
-		.tool-name {
-			margin: 0;
-			font-size: 1.05em;
-			color: var(--c-text);
-		}
+		display: flex; align-items: center; gap: 0.5rem;
+		.tool-icon { font-size: 1.5em; color: var(--c-primary); flex-shrink: 0; }
+		.tool-name { margin: 0; font-size: 1.05em; color: var(--c-text); }
 	}
-
-	.tool-desc {
-		margin: 0;
-		font-size: 0.85em;
-		line-height: 1.5;
-		color: var(--c-text-2);
-		flex-grow: 1;
-	}
-
-	.tool-category {
-		align-self: flex-start;
-		padding: 0.1em 0.5em;
-		border-radius: 0.4em;
-		background-color: var(--c-primary-soft);
-		color: var(--c-primary);
-		font-size: 0.72em;
-	}
+	.tool-desc { margin: 0; font-size: 0.85em; line-height: 1.5; color: var(--c-text-2); flex-grow: 1; }
+	.tool-category { align-self: flex-start; padding: 0.1em 0.5em; border-radius: 0.4em; background-color: var(--c-primary-soft); color: var(--c-primary); font-size: 0.72em; }
 }
 </style>
