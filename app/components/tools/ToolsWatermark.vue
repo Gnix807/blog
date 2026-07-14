@@ -46,7 +46,7 @@ function handleFile(e: Event) {
 		const img = new Image()
 		img.onload = () => {
 			previewUrl.value = src
-			if (watermarkText.value) drawWatermark(img)
+			drawWatermark(img)
 		}
 		img.src = src
 	}
@@ -77,7 +77,7 @@ function drawWatermark(img?: HTMLImageElement) {
 }
 
 function drawText(ctx: CanvasRenderingContext2D) {
-	const w = canvasEl.value!.width
+	if (!watermarkText.value) return
 	const h = canvasEl.value!.height
 	const weight = bold.value ? 'bold ' : ''
 	ctx.font = `${weight}${fontSize.value}px sans-serif`
