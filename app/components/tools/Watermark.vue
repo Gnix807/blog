@@ -101,7 +101,16 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 	<div v-if="originalUrl" style="margin-top:1rem">
 		<p>✓ 图片已加载</p>
 		<input v-model="watermarkText" placeholder="水印文字" style="padding:0.5em;border:1px solid var(--c-border);border-radius:0.4em;width:100%;max-width:300px">
-		<p style="font-size:0.8em;color:var(--c-text-3);margin-top:0.5em">(v-if 测试)</p>
+
+		<div style="margin-top:0.8rem">
+			<div style="font-size:0.85em;color:var(--c-text-2);margin-bottom:0.3em">水印模式</div>
+			<button v-for="opt in positionOptions" :key="opt.value" :style="{ padding:'0.3em 0.8em', marginRight:'0.3em', border:'1px solid var(--c-border)', borderRadius:'0.4em', cursor:'pointer', background: position === opt.value ? 'var(--c-primary-soft)' : 'transparent', color: position === opt.value ? 'var(--c-primary)' : 'var(--c-text-2)' }" @click="position = opt.value">{{ opt.label }}</button>
+		</div>
+
+		<div style="margin-top:0.8rem">
+			<div style="font-size:0.85em;color:var(--c-text-2)">字号：{{ fontSize }}px</div>
+			<input type="range" min="12" max="200" v-model.number="fontSize" style="width:100%;margin-top:0.2em">
+		</div>
 	</div>
 </div>
 </template>
