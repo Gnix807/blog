@@ -107,14 +107,14 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 	<h1>图片水印</h1>
 	<p class="subtitle">添加文字水印，支持平铺模式。纯浏览器端处理，不涉及上传。</p>
 
-	<label class="upload-zone">
+	<label for="wm-input" class="upload-zone">
 		<img v-if="resultUrl" :src="resultUrl" class="preview-img" alt="">
 		<template v-else>
 			<Icon name="tabler:cloud-upload" class="upload-icon" />
 			<p class="upload-hint">点击上传图片</p>
 		</template>
-		<input type="file" accept="image/*" hidden @change="handleFile">
 	</label>
+	<input id="wm-input" type="file" accept="image/*" hidden @change="handleFile">
 	<canvas ref="canvasEl" style="display:none" />
 
 	<div class="controls" v-if="originalUrl">
