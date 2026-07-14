@@ -83,41 +83,70 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 </script>
 
 <template>
-<div class="tool-page">
-	<button class="back-link" @click="$emit('back')"><Icon name="tabler:arrow-left" /><span>工具箱</span></button>
-	<h1>图片水印 - 测试3</h1>
-	<p>全量脚本 + 简化模板</p>
+<div :style="{ padding: '1rem', maxWidth: '720px' }">
+	<button :style="{ display: 'inline-flex', alignItems: 'center', gap: '0.3em', fontSize: '0.85em', color: 'var(--c-text-2)', cursor: 'pointer', marginBottom: '0.8rem' }" @click="$emit('back')"><Icon name="tabler:arrow-left" /><span>工具箱</span></button>
+	<h1 :style="{ margin: 0, fontSize: '1.6em' }">图片水印</h1>
+	<p :style="{ margin: '0.3em 0 1rem', fontSize: '0.9em', color: 'var(--c-text-2)' }">添加文字水印，支持平铺模式。纯浏览器端处理。</p>
 
-	<label class="upload-zone" for="wm-input">
-		<img v-if="resultUrl" :src="resultUrl" class="preview-img" alt="">
+	<label :style="{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px', border: '2px dashed var(--c-border)', borderRadius: '0.8em', cursor: 'pointer', marginBottom: '1rem', overflow: 'hidden' }" for="wm-input">
+		<img v-if="resultUrl" :src="resultUrl" :style="{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain' }" alt="">
 		<template v-else>
-			<Icon name="tabler:cloud-upload" class="upload-icon" />
-			<p class="upload-hint">点击上传图片</p>
+			<Icon name="tabler:cloud-upload" :style="{ fontSize: '2.5em', color: 'var(--c-text-3)' }" />
+			<p :style="{ marginTop: '0.5em', fontSize: '0.9em', color: 'var(--c-text-3)' }">点击上传图片</p>
 		</template>
 	</label>
 	<input id="wm-input" type="file" accept="image/*" hidden @change="handleFile">
 	<canvas ref="canvasEl" style="display:none" />
 
-	<div v-if="originalUrl" style="margin-top:1rem">
-		<p>✓ 图片已加载</p>
-		<input v-model="watermarkText" placeholder="水印文字" style="padding:0.5em;border:1px solid var(--c-border);border-radius:0.4em;width:100%;max-width:300px">
-
-		<div style="margin-top:0.8rem">
-			<div style="font-size:0.85em;color:var(--c-text-2);margin-bottom:0.3em">水印模式</div>
-			<button v-for="opt in positionOptions" :key="opt.value" :style="{ padding:'0.3em 0.8em', marginRight:'0.3em', border:'1px solid var(--c-border)', borderRadius:'0.4em', cursor:'pointer', background: position === opt.value ? 'var(--c-primary-soft)' : 'transparent', color: position === opt.value ? 'var(--c-primary)' : 'var(--c-text-2)' }" @click="position = opt.value">{{ opt.label }}</button>
+	<div v-if="originalUrl" :style="{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }">
+		<div :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">水印文字</span>
+			<input v-model="watermarkText" type="text" placeholder="输入水印文字" :style="{ padding: '0.5em 0.7em', border: '1px solid var(--c-border)', borderRadius: '0.4em', background: 'var(--c-bg)', color: 'var(--c-text)', fontSize: '0.95em', outline: 'none', maxWidth: '100%' }">
 		</div>
-
-		<div style="margin-top:0.8rem">
-			<div style="font-size:0.85em;color:var(--c-text-2)">字号：{{ fontSize }}px</div>
-			<input type="range" min="12" max="200" v-model.number="fontSize" style="width:100%;margin-top:0.2em">
+		<div :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">水印模式</span>
+			<div :style="{ display: 'flex', flexWrap: 'wrap', gap: '0.3em' }">
+				<button v-for="opt in positionOptions" :key="opt.value" @click="position = opt.value" :style="{ padding: '0.4em 1em', border: `1px solid ${position === opt.value ? 'var(--c-primary)' : 'var(--c-border)'}`, borderRadius: '0.4em', fontSize: '0.9em', cursor: 'pointer', background: position === opt.value ? 'var(--c-primary-soft)' : 'transparent', color: position === opt.value ? 'var(--c-primary)' : 'var(--c-text-2)' }">{{ opt.label }}</button>
+			</div>
 		</div>
+		<div :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">字号：{{ fontSize }}px</span>
+			<input type="range" min="12" max="200" v-model.number="fontSize" :style="{ width: '100%', accentColor: 'var(--c-primary)' }">
+		</div>
+		<div :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">旋转：{{ rotation }}°</span>
+			<input type="range" min="-90" max="90" v-model.number="rotation" :style="{ width: '100%', accentColor: 'var(--c-primary)' }">
+		</div>
+		<div v-if="position === 'tile'" :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">平铺间距：{{ tileSpacing }}px</span>
+			<input type="range" min="80" max="500" step="10" v-model.number="tileSpacing" :style="{ width: '100%', accentColor: 'var(--c-primary)' }">
+		</div>
+		<div :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">透明度：{{ Math.round(opacity * 100) }}%</span>
+			<input type="range" min="0.05" max="1" step="0.05" v-model.number="opacity" :style="{ width: '100%', accentColor: 'var(--c-primary)' }">
+		</div>
+		<div :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">字体加粗</span>
+			<div :style="{ display: 'flex', gap: '0.3em' }">
+				<button @click="bold = !bold" :style="{ padding: '0.4em 1em', border: `1px solid ${bold ? 'var(--c-primary)' : 'var(--c-border)'}`, borderRadius: '0.4em', fontSize: '0.9em', cursor: 'pointer', background: bold ? 'var(--c-primary-soft)' : 'transparent', color: bold ? 'var(--c-primary)' : 'var(--c-text-2)' }">{{ bold ? '开' : '关' }}</button>
+			</div>
+		</div>
+		<div :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">颜色</span>
+			<div :style="{ display: 'flex', alignItems: 'center', gap: '0.4em' }">
+				<input type="color" v-model="color" :style="{ width: '36px', height: '36px', border: 'none', borderRadius: '0.4em', cursor: 'pointer', padding: '2px' }">
+				<button v-for="c in ['#ffffff','#000000','#ef4444']" :key="c" @click="color = c" :style="{ width: '28px', height: '28px', border: `2px solid ${color === c ? 'var(--c-primary)' : 'var(--c-border)'}`, borderRadius: '50%', cursor: 'pointer', background: c }" />
+			</div>
+		</div>
+		<div :style="{ display: 'flex', flexDirection: 'column', gap: '0.2em' }">
+			<span :style="{ fontSize: '0.85em', color: 'var(--c-text-2)' }">导出格式</span>
+			<div :style="{ display: 'flex', gap: '0.3em' }">
+				<button v-for="f in [{ v: 'image/png' as const, l: 'PNG' }, { v: 'image/jpeg' as const, l: 'JPEG' }, { v: 'image/webp' as const, l: 'WebP' }]" :key="f.v" @click="exportFormat = f.v" :style="{ padding: '0.4em 1em', border: `1px solid ${exportFormat === f.v ? 'var(--c-primary)' : 'var(--c-border)'}`, borderRadius: '0.4em', fontSize: '0.9em', cursor: 'pointer', background: exportFormat === f.v ? 'var(--c-primary-soft)' : 'transparent', color: exportFormat === f.v ? 'var(--c-primary)' : 'var(--c-text-2)' }">{{ f.l }}</button>
+			</div>
+		</div>
+		<button @click="download" :disabled="!resultUrl || downloading" :style="{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4em', padding: '0.6em 1.5em', borderRadius: '0.5em', background: 'var(--c-primary)', color: '#fff', fontSize: '0.95em', cursor: (!resultUrl || downloading) ? 'not-allowed' : 'pointer', border: 'none', opacity: (!resultUrl || downloading) ? 0.5 : 1 }">
+			<Icon name="tabler:download" /><span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span>
+		</button>
 	</div>
 </div>
 </template>
-
-<style lang="scss" scoped>
-.tool-page { padding: 1rem; max-width: 720px; }
-.back-link { display: inline-flex; align-items: center; gap: 0.3em; font-size: 0.85em; color: var(--c-text-2); cursor: pointer; margin-bottom: 0.8rem; }
-h1 { margin: 0; font-size: 1.6em; }
-.upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; border: 2px dashed var(--c-border); border-radius: 0.8em; cursor: pointer; margin-bottom: 1rem; overflow: hidden; &:hover { border-color: var(--c-primary); background: var(--c-bg-soft); } .upload-icon { font-size: 2.5em; color: var(--c-text-3); } .upload-hint { margin-top: 0.5em; font-size: 0.9em; color: var(--c-text-3); } .preview-img { max-width: 100%; max-height: 400px; object-fit: contain; } }
-</style>
