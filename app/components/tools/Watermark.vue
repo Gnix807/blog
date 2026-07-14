@@ -4,7 +4,6 @@ defineEmits<{ back: [] }>()
 const canvasEl = ref<HTMLCanvasElement>()
 const originalUrl = ref('')
 const resultUrl = ref('')
-const downloading = ref(false)
 const watermarkText = ref('')
 const fontSize = ref(48)
 const opacity = ref(0.3)
@@ -12,7 +11,6 @@ const position = ref<'tl' | 'tr' | 'bl' | 'br' | 'center' | 'tile'>('br')
 const color = ref('#ffffff')
 const rotation = ref(-30)
 const bold = ref(false)
-const exportFormat = ref<'image/png' | 'image/jpeg' | 'image/webp'>('image/png')
 const tileSpacing = ref(200)
 
 const exportExt = computed(() => ({ 'image/jpeg': '.jpg', 'image/webp': '.webp' }[exportFormat.value] || '.png'))
@@ -71,22 +69,14 @@ function applyWatermark() {
 	ctx.restore(); resultUrl.value = canvas.toDataURL()
 }
 
-function download() {
-	if (!canvasEl.value) return; downloading.value = true
-	canvasEl.value.toBlob((blob) => {
-		if (!blob) return; const a = document.createElement('a'); a.href = URL.createObjectURL(blob)
-		a.download = `watermarked${exportExt.value}`; a.click(); downloading.value = false
-	}, exportFormat.value === 'image/png' ? 'image/png' : exportFormat.value, 0.9)
-}
-
 watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSpacing], () => { if (originalUrl.value) applyWatermark() })
 </script>
 
 <template>
 <div class="tool-page">
 	<button class="back-link" @click="$emit('back')"><Icon name="tabler:arrow-left" /><span>工具箱</span></button>
-	<h1>图片水印 - 测试3</h1>
-	<p>全量脚本 + 简化模板</p>
+	<h1>图片水印</h1>
+	<p class="subtitle">添加文字水印，支持平铺模式。纯浏览器端处理，不涉及上传。</p>
 
 	<label class="upload-zone" for="wm-input">
 		<img v-if="resultUrl" :src="resultUrl" class="preview-img" alt="">
@@ -99,7 +89,6 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 	<canvas ref="canvasEl" style="display:none" />
 
 	<div v-if="originalUrl" style="margin-top:1rem">
-		<p>✓ 图片已加载</p>
 		<input v-model="watermarkText" placeholder="水印文字" style="padding:0.5em;border:1px solid var(--c-border);border-radius:0.4em;width:100%;max-width:300px">
 
 		<div style="margin-top:0.8rem">
@@ -140,15 +129,6 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 			</div>
 		</div>
 
-		<div style="margin-top:0.8rem">
-			<div style="font-size:0.85em;color:var(--c-text-2);margin-bottom:0.3em">导出格式</div>
-			<div style="display:flex;gap:0.3em">
-				<button @click="exportFormat = 'image/png'" :style="{ padding:'0.3em 0.8em', border:`1px solid ${exportFormat==='image/png'?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'0.4em', cursor:'pointer', fontSize:'0.9em', background: exportFormat==='image/png'?'var(--c-primary-soft)':'transparent', color: exportFormat==='image/png'?'var(--c-primary)':'var(--c-text-2)' }">PNG</button>
-				<button @click="exportFormat = 'image/jpeg'" :style="{ padding:'0.3em 0.8em', border:`1px solid ${exportFormat==='image/jpeg'?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'0.4em', cursor:'pointer', fontSize:'0.9em', background: exportFormat==='image/jpeg'?'var(--c-primary-soft)':'transparent', color: exportFormat==='image/jpeg'?'var(--c-primary)':'var(--c-text-2)' }">JPEG</button>
-				<button @click="exportFormat = 'image/webp'" :style="{ padding:'0.3em 0.8em', border:`1px solid ${exportFormat==='image/webp'?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'0.4em', cursor:'pointer', fontSize:'0.9em', background: exportFormat==='image/webp'?'var(--c-primary-soft)':'transparent', color: exportFormat==='image/webp'?'var(--c-primary)':'var(--c-text-2)' }">WebP</button>
-			</div>
-		</div>
-
 		<p v-if="resultUrl" style="margin-top:0.5em;font-size:0.85em;color:var(--c-text-3)">右键预览图可另存为下载</p>
 	</div>
 </div>
@@ -158,5 +138,6 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 .tool-page { padding: 1rem; max-width: 720px; }
 .back-link { display: inline-flex; align-items: center; gap: 0.3em; font-size: 0.85em; color: var(--c-text-2); cursor: pointer; margin-bottom: 0.8rem; }
 h1 { margin: 0; font-size: 1.6em; }
+.subtitle { margin: 0.3em 0 1rem; font-size: 0.9em; color: var(--c-text-2); }
 .upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; border: 2px dashed var(--c-border); border-radius: 0.8em; cursor: pointer; margin-bottom: 1rem; overflow: hidden; &:hover { border-color: var(--c-primary); background: var(--c-bg-soft); } .upload-icon { font-size: 2.5em; color: var(--c-text-3); } .upload-hint { margin-top: 0.5em; font-size: 0.9em; color: var(--c-text-3); } .preview-img { max-width: 100%; max-height: 400px; object-fit: contain; } }
 </style>
