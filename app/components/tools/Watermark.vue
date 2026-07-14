@@ -149,7 +149,7 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 			</div>
 		</div>
 
-		<button @click="download" :disabled="!resultUrl || downloading" :style="{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.4em', padding:'0.6em 1.5em', borderRadius:'0.5em', background:'var(--c-primary)', color:'#fff', fontSize:'0.95em', marginTop:'0.5em', cursor: (!resultUrl||downloading) ? 'not-allowed' : 'pointer', border:'none', opacity: (!resultUrl||downloading) ? 0.5 : 1 }">
+		<button v-if="resultUrl" @click="download" style="display:inline-flex;align-items:center;justify-content:center;gap:0.4em;padding:0.6em 1.5em;border-radius:0.5em;background:var(--c-primary);color:#fff;font-size:0.95em;cursor:pointer;border:none;margin-top:0.5em">
 			<Icon name="tabler:download" /><span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span>
 		</button>
 	</div>
