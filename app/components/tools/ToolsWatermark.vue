@@ -3,6 +3,7 @@ defineEmits<{ back: [] }>()
 
 const inputEl = ref<HTMLInputElement>()
 const canvasEl = ref<HTMLCanvasElement>()
+const originalUrl = ref('')
 const previewUrl = ref('')
 const downloading = ref(false)
 const watermarkText = ref('')
@@ -23,18 +24,15 @@ const exportExt = computed(() => {
 	}
 })
 
-const exportMime = computed(() => {
-	if (exportFormat.value === 'image/png') return 'image/png'
-	return exportFormat.value
-})
+const exportMime = computed(() => exportFormat.value === 'image/png' ? 'image/png' : exportFormat.value)
 
 const positionOptions = [
-	{ value: 'tile' as const, label: '平铺', icon: 'tabler:grid-dots' },
-	{ value: 'tl' as const, label: '左上', icon: '' },
-	{ value: 'tr' as const, label: '右上', icon: '' },
-	{ value: 'bl' as const, label: '左下', icon: '' },
-	{ value: 'br' as const, label: '右下', icon: '' },
-	{ value: 'center' as const, label: '居中', icon: '' },
+	{ value: 'tile' as const, label: '平铺' },
+	{ value: 'tl' as const, label: '左上' },
+	{ value: 'tr' as const, label: '右上' },
+	{ value: 'bl' as const, label: '左下' },
+	{ value: 'br' as const, label: '右下' },
+	{ value: 'center' as const, label: '居中' },
 ]
 
 function handleFile(e: Event) {
@@ -43,94 +41,78 @@ function handleFile(e: Event) {
 	const reader = new FileReader()
 	reader.onload = (ev) => {
 		const src = ev.target?.result as string
-		const img = new Image()
-		img.onload = () => {
-			previewUrl.value = src
-			drawWatermark(img)
-		}
-		img.src = src
+		originalUrl.value = src
+		renderWatermark(src)
 	}
 	reader.readAsDataURL(file)
 }
 
-function drawWatermark(img?: HTMLImageElement) {
-	if (!previewUrl.value) return
-	const canvas = canvasEl.value!
-	const ctx = canvas.getContext('2d')!
-	const render = () => {
-		drawText(ctx)
-	}
+function renderWatermark(src?: string) {
+	const srcUrl = src || originalUrl.value
+	if (!srcUrl) return
 
-	if (img) {
-		canvas.width = img.naturalWidth; canvas.height = img.naturalHeight
+	const img = new Image()
+	img.onload = () => {
+		const canvas = canvasEl.value!
+		canvas.width = img.naturalWidth
+		canvas.height = img.naturalHeight
+		const ctx = canvas.getContext('2d')!
 		ctx.drawImage(img, 0, 0)
-		render()
-	} else {
-		const existingImg = new Image()
-		existingImg.onload = () => {
-			canvas.width = existingImg.naturalWidth; canvas.height = existingImg.naturalHeight
-			ctx.drawImage(existingImg, 0, 0)
-			render()
-		}
-		existingImg.src = previewUrl.value
-	}
-}
 
-function drawText(ctx: CanvasRenderingContext2D) {
-	if (!watermarkText.value) return
-	const h = canvasEl.value!.height
-	const weight = bold.value ? 'bold ' : ''
-	ctx.font = `${weight}${fontSize.value}px sans-serif`
-	ctx.fillStyle = `${color.value}${Math.round(opacity.value * 255).toString(16).padStart(2, '0')}`
-	ctx.textAlign = 'center'
-	ctx.textBaseline = 'middle'
-	ctx.save()
+		if (watermarkText.value) {
+			const w = canvas.width
+			const h = canvas.height
+			const weight = bold.value ? 'bold ' : ''
+			ctx.font = `${weight}${fontSize.value}px sans-serif`
+			ctx.fillStyle = `${color.value}${Math.round(opacity.value * 255).toString(16).padStart(2, '0')}`
+			ctx.textAlign = 'center'
+			ctx.textBaseline = 'middle'
+			ctx.save()
 
-	if (position.value === 'tile') {
-		const rad = (rotation.value * Math.PI) / 180
-		const spacing = Math.max(tileSpacing.value, fontSize.value * 2)
-		const cols = Math.ceil(w / spacing) + 2
-		const rows = Math.ceil(h / spacing) + 2
-
-		for (let row = -1; row < rows; row++) {
-			for (let col = -1; col < cols; col++) {
-				const cx = col * spacing + spacing / 2
-				const cy = row * spacing + spacing / 2
-				ctx.save()
-				ctx.translate(cx, cy)
+			if (position.value === 'tile') {
+				const rad = (rotation.value * Math.PI) / 180
+				const spacing = Math.max(tileSpacing.value, fontSize.value * 2)
+				const cols = Math.ceil(w / spacing) + 2
+				const rows = Math.ceil(h / spacing) + 2
+				for (let row = -1; row < rows; row++) {
+					for (let col = -1; col < cols; col++) {
+						ctx.save()
+						ctx.translate(col * spacing + spacing / 2, row * spacing + spacing / 2)
+						ctx.rotate(rad)
+						ctx.fillText(watermarkText.value, 0, 0)
+						ctx.restore()
+					}
+				}
+			} else {
+				const rad = (rotation.value * Math.PI) / 180
+				const pad = Math.max(fontSize.value * 1.5, 40)
+				let x: number, y: number
+				switch (position.value) {
+					case 'tl': x = pad; y = pad + fontSize.value / 2; break
+					case 'tr': x = w - pad; y = pad + fontSize.value / 2; break
+					case 'bl': x = pad; y = h - pad - fontSize.value / 2; break
+					case 'br': x = w - pad; y = h - pad - fontSize.value / 2; break
+					default: x = w / 2; y = h / 2
+				}
+				ctx.translate(x, y)
 				ctx.rotate(rad)
 				ctx.fillText(watermarkText.value, 0, 0)
-				ctx.restore()
 			}
-		}
-	} else {
-		const rad = (rotation.value * Math.PI) / 180
-		const pad = Math.max(fontSize.value * 1.5, 40)
-
-		let x: number, y: number
-		switch (position.value) {
-			case 'tl': x = pad; y = pad + fontSize.value / 2; break
-			case 'tr': x = w - pad; y = pad + fontSize.value / 2; break
-			case 'bl': x = pad; y = h - pad - fontSize.value / 2; break
-			case 'br': x = w - pad; y = h - pad - fontSize.value / 2; break
-			case 'center': x = w / 2; y = h / 2; break
-			default: x = w - pad; y = h - pad - fontSize.value / 2
+			ctx.restore()
 		}
 
-		ctx.translate(x, y)
-		ctx.rotate(rad)
-		ctx.fillText(watermarkText.value, 0, 0)
+		previewUrl.value = canvas.toDataURL()
 	}
-
-	ctx.restore()
+	img.src = srcUrl
 }
 
 function download() {
-	if (!canvasEl.value) return
+	if (!previewUrl.value) return
 	downloading.value = true
+	const canvas = canvasEl.value!
 	const mime = exportMime.value
 	const quality = mime === 'image/png' ? undefined : 0.9
-	canvasEl.value.toBlob((blob) => {
+	canvas.toBlob((blob) => {
 		if (!blob) return
 		const a = document.createElement('a')
 		a.href = URL.createObjectURL(blob)
@@ -141,7 +123,7 @@ function download() {
 }
 
 watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSpacing], () => {
-	if (previewUrl.value) drawWatermark()
+	renderWatermark()
 })
 </script>
 
@@ -154,68 +136,55 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 		</button>
 	</div>
 	<h1>图片水印</h1>
-	<p class="subtitle">添加文字水印，支持单水印和平铺模式。纯浏览器端处理，图片不会上传。</p>
+	<p class="subtitle">添加文字水印，支持平铺模式。纯浏览器端处理，图片不会上传。</p>
 	<div class="watermark-tool">
 		<div class="upload-zone" @click="inputEl?.click()">
-			<canvas ref="canvasEl" v-if="previewUrl" class="preview-canvas" />
+			<img v-if="previewUrl" :src="previewUrl" class="preview-img" alt="preview">
 			<template v-else>
 				<Icon name="tabler:cloud-upload" class="upload-icon" />
 				<p class="upload-hint">点击上传图片</p>
 			</template>
 		</div>
 		<input ref="inputEl" type="file" accept="image/*" hidden @change="handleFile">
+		<canvas ref="canvasEl" style="display:none" />
 
-		<div class="controls" v-if="previewUrl">
+		<div class="controls" v-if="originalUrl">
 			<div class="control-row">
 				<label>水印文字</label>
 				<input v-model="watermarkText" type="text" placeholder="输入水印文字" class="text-input">
 			</div>
-
 			<div class="control-row">
 				<label>水印模式</label>
 				<div class="position-btns">
-					<button
-						v-for="opt in positionOptions"
-						:key="opt.value"
-						:class="{ active: position === opt.value }"
-						@click="position = opt.value"
-					>
+					<button v-for="opt in positionOptions" :key="opt.value" :class="{ active: position === opt.value }" @click="position = opt.value">
 						{{ opt.label }}
 					</button>
 				</div>
 			</div>
-
 			<div class="control-row">
 				<label>字号：{{ fontSize }}px</label>
 				<input type="range" min="12" max="200" v-model.number="fontSize" class="slider">
 			</div>
-
 			<div class="control-row">
 				<label>旋转：{{ rotation }}°</label>
 				<input type="range" min="-90" max="90" v-model.number="rotation" class="slider">
 			</div>
-
 			<div class="control-row">
 				<label>透明度：{{ Math.round(opacity * 100) }}%</label>
 				<input type="range" min="0.05" max="1" step="0.05" v-model.number="opacity" class="slider">
 			</div>
-
 			<div class="control-row" v-if="position === 'tile'">
 				<label>平铺间距：{{ tileSpacing }}px</label>
 				<input type="range" min="80" max="500" step="10" v-model.number="tileSpacing" class="slider">
 			</div>
-
 			<div class="control-row">
 				<label>字体加粗</label>
 				<label class="switch-label">
 					<input type="checkbox" v-model="bold" class="switch-input">
-					<span class="switch-track">
-						<span class="switch-thumb" />
-					</span>
+					<span class="switch-track"><span class="switch-thumb" /></span>
 					<span class="switch-text">{{ bold ? '开' : '关' }}</span>
 				</label>
 			</div>
-
 			<div class="control-row">
 				<label>颜色</label>
 				<div class="color-row">
@@ -225,22 +194,15 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 					<button class="color-preset" :class="{ active: color === '#ef4444' }" @click="color = '#ef4444'" style="background: #ef4444" />
 				</div>
 			</div>
-
 			<div class="control-row">
 				<label>导出格式</label>
 				<div class="position-btns">
-					<button
-						v-for="opt in [{ value: 'image/png' as const, label: 'PNG' }, { value: 'image/jpeg' as const, label: 'JPEG' }, { value: 'image/webp' as const, label: 'WebP' }]"
-						:key="opt.value"
-						:class="{ active: exportFormat === opt.value }"
-						@click="exportFormat = opt.value"
-					>
-						{{ opt.label }}
+					<button v-for="opt in [{ v: 'image/png' as const, l: 'PNG' }, { v: 'image/jpeg' as const, l: 'JPEG' }, { v: 'image/webp' as const, l: 'WebP' }]" :key="opt.v" :class="{ active: exportFormat === opt.v }" @click="exportFormat = opt.v">
+						{{ opt.l }}
 					</button>
 				</div>
 			</div>
-
-			<button class="download-btn" :disabled="!watermarkText || downloading" @click="download">
+			<button class="download-btn" :disabled="!previewUrl || downloading" @click="download">
 				<Icon name="tabler:download" />
 				<span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.', '').toUpperCase()}` }}</span>
 			</button>
@@ -262,7 +224,6 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 }
 
 h1 { margin: 0; font-size: 1.6em; }
-
 .subtitle { margin: 0.3em 0 1.2rem; font-size: 0.9em; color: var(--c-text-2); }
 
 .upload-zone {
@@ -273,27 +234,19 @@ h1 { margin: 0; font-size: 1.6em; }
 	&:hover { border-color: var(--c-primary); background-color: var(--c-bg-soft); }
 	.upload-icon { font-size: 2.5em; color: var(--c-text-3); }
 	.upload-hint { margin-top: 0.5em; font-size: 0.9em; color: var(--c-text-3); }
-	.preview-canvas { max-width: 100%; max-height: 400px; object-fit: contain; }
+	.preview-img { max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 0.4em; }
 }
 
 .controls {
 	display: flex; flex-direction: column; gap: 1rem; margin-top: 1.2rem;
-
-	.control-row {
-		display: flex; flex-direction: column; gap: 0.4em;
-
-		label { font-size: 0.85em; color: var(--c-text-2); }
-	}
-
+	.control-row { display: flex; flex-direction: column; gap: 0.4em; label { font-size: 0.85em; color: var(--c-text-2); } }
 	.text-input {
 		padding: 0.5em 0.7em; border: 1px solid var(--c-border); border-radius: 0.4em;
-		background-color: var(--c-bg); color: var(--c-text); font-size: 0.95em;
-		outline: none; transition: border-color 0.2s;
+		background-color: var(--c-bg); color: var(--c-text); font-size: 0.95em; outline: none;
+		transition: border-color 0.2s;
 		&:focus { border-color: var(--c-primary); }
 	}
-
 	.slider { width: 100%; accent-color: var(--c-primary); }
-
 	.position-btns {
 		display: flex; flex-wrap: wrap; gap: 0.3em;
 		button {
@@ -303,42 +256,32 @@ h1 { margin: 0; font-size: 1.6em; }
 			&.active { background-color: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-primary); }
 		}
 	}
-
 	.color-row {
 		display: flex; align-items: center; gap: 0.4em;
 		.color-picker { width: 36px; height: 36px; border: none; border-radius: 0.4em; cursor: pointer; padding: 2px; }
 		.color-preset {
-			width: 28px; height: 28px; border: 2px solid var(--c-border); border-radius: 50%;
-			cursor: pointer; transition: border-color 0.2s;
+			width: 28px; height: 28px; border: 2px solid var(--c-border); border-radius: 50%; cursor: pointer;
+			transition: border-color 0.2s;
 			&.active { border-color: var(--c-primary); }
 		}
 	}
-
 	.switch-label {
 		display: inline-flex; align-items: center; gap: 0.5em; cursor: pointer;
-
 		.switch-input { display: none; }
-
 		.switch-track {
-			position: relative; width: 40px; height: 22px;
-			border-radius: 11px; background-color: var(--c-border);
-			transition: background-color 0.2s;
-
+			position: relative; width: 40px; height: 22px; border-radius: 11px;
+			background-color: var(--c-border); transition: background-color 0.2s;
 			.switch-thumb {
-				position: absolute; top: 3px; left: 3px;
-				width: 16px; height: 16px; border-radius: 50%;
-				background-color: #fff; transition: transform 0.2s;
+				position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+				border-radius: 50%; background-color: #fff; transition: transform 0.2s;
 			}
 		}
-
 		.switch-input:checked + .switch-track {
 			background-color: var(--c-primary);
 			.switch-thumb { transform: translateX(18px); }
 		}
-
 		.switch-text { font-size: 0.85em; color: var(--c-text-2); }
 	}
-
 	.download-btn {
 		display: inline-flex; align-items: center; justify-content: center; gap: 0.4em;
 		padding: 0.6em 1.5em; border-radius: 0.5em; background-color: var(--c-primary);
