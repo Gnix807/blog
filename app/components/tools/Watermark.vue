@@ -149,8 +149,8 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 			</div>
 		</div>
 
-		<button v-if="resultUrl" @click="download" style="display:inline-flex;align-items:center;justify-content:center;gap:0.4em;padding:0.6em 1.5em;border-radius:0.5em;background:var(--c-primary);color:#fff;font-size:0.95em;cursor:pointer;border:none;margin-top:0.5em">
-			<Icon name="tabler:download" /><span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span>
+		<button v-if="resultUrl" @click="() => { const c = canvasEl; if(!c) return; const m = exportFormat.value === 'image/png' ? 'image/png' : exportFormat.value; const u = c.toDataURL(m, 0.9); const a = document.createElement('a'); a.href = u; a.download = 'watermarked'+exportExt.value; a.click() }" style="display:inline-flex;align-items:center;justify-content:center;gap:0.4em;padding:0.6em 1.5em;border-radius:0.5em;background:var(--c-primary);color:#fff;font-size:0.95em;cursor:pointer;border:none;margin-top:0.5em">
+			<Icon name="tabler:download" /><span>下载 {{ exportExt.value.replace('.','').toUpperCase() }}</span>
 		</button>
 	</div>
 </div>
