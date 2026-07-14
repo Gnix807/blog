@@ -127,11 +127,6 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 			<button @click="bold = !bold" :style="{ padding:'0.3em 0.8em', border:'1px solid var(--c-border)', borderRadius:'0.4em', cursor:'pointer', background: bold ? 'var(--c-primary-soft)' : 'transparent', color: bold ? 'var(--c-primary)' : 'var(--c-text-2)' }">{{ bold ? '开' : '关' }}</button>
 		</div>
 
-		<div v-if="position === 'tile'" style="margin-top:0.8rem">
-			<div style="font-size:0.85em;color:var(--c-text-2)">平铺间距：{{ tileSpacing }}px</div>
-			<input type="range" min="80" max="500" step="10" v-model.number="tileSpacing" style="width:100%;margin-top:0.2em">
-		</div>
-
 		<div style="margin-top:0.8rem">
 			<div style="font-size:0.85em;color:var(--c-text-2);margin-bottom:0.3em">颜色</div>
 			<div style="display:flex;align-items:center;gap:0.4em">
@@ -139,17 +134,6 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 				<button v-for="c in ['#ffffff','#000000','#ef4444']" :key="c" @click="color = c" :style="{ width:'28px', height:'28px', border:`2px solid ${color===c?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'50%', cursor:'pointer', background:c }" />
 			</div>
 		</div>
-
-		<div style="margin-top:0.8rem">
-			<div style="font-size:0.85em;color:var(--c-text-2);margin-bottom:0.3em">导出格式</div>
-			<div style="display:flex;gap:0.3em">
-				<button v-for="f in [{ v: 'image/png' as const, l: 'PNG' }, { v: 'image/jpeg' as const, l: 'JPEG' }, { v: 'image/webp' as const, l: 'WebP' }]" :key="f.v" @click="exportFormat = f.v" :style="{ padding:'0.3em 0.8em', border:`1px solid ${exportFormat===f.v ? 'var(--c-primary)' : 'var(--c-border)'}`, borderRadius:'0.4em', cursor:'pointer', fontSize:'0.9em', background: exportFormat===f.v ? 'var(--c-primary-soft)' : 'transparent', color: exportFormat===f.v ? 'var(--c-primary)' : 'var(--c-text-2)' }">{{ f.l }}</button>
-			</div>
-		</div>
-
-		<button @click="download" :disabled="!resultUrl || downloading" :style="{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.4em', padding:'0.6em 1.5em', borderRadius:'0.5em', background:'var(--c-primary)', color:'#fff', fontSize:'0.95em', cursor: (!resultUrl||downloading) ? 'not-allowed':'pointer', border:'none', marginTop:'0.5em', opacity: (!resultUrl||downloading) ? 0.5 : 1 }">
-			<Icon name="tabler:download" /><span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span>
-		</button>
 	</div>
 </div>
 </template>
