@@ -124,6 +124,7 @@ export default defineAppConfig({
 				{ icon: 'tabler:users-group', text: '友圈', url: '/fc' },
 				{ icon: 'tabler:movie', text: '番剧', url: '/anime' },
 				{ icon: 'tabler:code', text: '项目', url: '/projects' },
+				{ icon: 'tabler:tools', text: '工具箱', url: '/tools' },
 				{ icon: 'tabler:hash', text: '标签', url: '/tags' },
 				{ icon: 'tabler:link', text: '友链', url: '/link' },
 				{ icon: 'tabler:archive', text: '归档', url: '/archive' },

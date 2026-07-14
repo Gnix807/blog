@@ -2,6 +2,7 @@
 title: 旧电脑突然暴毙，我在毕业季紧急换机
 description: 用了四年的戴尔游匣G15无故黑屏、电脑城判了死刑，Deadline 压顶之际火速下单天选6Pro——一场被逼到墙角的换机实录。
 date: 2026-04-18 19:00:36
+updated: 2026-07-01 15:20:25
 image:
 type: story
 categories: [生活]
