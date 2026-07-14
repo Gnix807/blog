@@ -116,6 +116,16 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 			<div style="font-size:0.85em;color:var(--c-text-2)">旋转：{{ rotation }}°</div>
 			<input type="range" min="-90" max="90" v-model.number="rotation" style="width:100%;margin-top:0.2em">
 		</div>
+
+		<div style="margin-top:0.8rem">
+			<div style="font-size:0.85em;color:var(--c-text-2)">透明度：{{ Math.round(opacity * 100) }}%</div>
+			<input type="range" min="0.05" max="1" step="0.05" v-model.number="opacity" style="width:100%;margin-top:0.2em">
+		</div>
+
+		<div style="margin-top:0.8rem">
+			<div style="font-size:0.85em;color:var(--c-text-2)">字体加粗</div>
+			<button @click="bold = !bold" :style="{ padding:'0.3em 0.8em', border:'1px solid var(--c-border)', borderRadius:'0.4em', cursor:'pointer', background: bold ? 'var(--c-primary-soft)' : 'transparent', color: bold ? 'var(--c-primary)' : 'var(--c-text-2)' }">{{ bold ? '开' : '关' }}</button>
+		</div>
 	</div>
 </div>
 </template>
