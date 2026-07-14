@@ -79,8 +79,8 @@ function back() {
 		<Icon name="tabler:arrow-left" /><span>工具箱</span>
 	</button>
 	<h1>图片水印</h1>
-	<p class="subtitle">测试：上传图片看是否生效</p>
-	<input type="file" accept="image/*" @change="(e) => { const f = (e.target as HTMLInputElement).files?.[0]; console.log('file:', f?.name); if (f) alert('选中: ' + f.name) }">
+	<p>选中文件后看是否弹出 alert</p>
+	<input type="file" @change="(e) => { const el = e.target; if (el) alert('ok: ' + el.files[0]?.name) }">
 </div>
 </template>
 
