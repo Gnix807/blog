@@ -125,7 +125,7 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 
 		<div class="row">
 			<label>字体加粗</label>
-			<label class="switch-label"><input type="checkbox" v-model="bold" hidden><span class="track"><span class="thumb" /></span><span class="txt">{{ bold ? '开' : '关' }}</span></label>
+			<div class="chips"><button :class="{ active: bold }" @click="bold = !bold">{{ bold ? '开' : '关' }}</button></div>
 		</div>
 
 		<div class="row">
@@ -162,8 +162,6 @@ h1 { margin: 0; font-size: 1.6em; }
 .chips { display: flex; flex-wrap: wrap; gap: 0.3em; button { padding: 0.4em 1em; border: 1px solid var(--c-border); border-radius: 0.4em; font-size: 0.9em; color: var(--c-text-2); background: transparent; cursor: pointer; transition: all 0.2s; &:hover { border-color: var(--c-primary); } &.active { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-primary); } } }
 
 .color-row { display: flex; align-items: center; gap: 0.4em; .color-picker { width: 36px; height: 36px; border: none; border-radius: 0.4em; cursor: pointer; padding: 2px; } .color-preset { width: 28px; height: 28px; border: 2px solid var(--c-border); border-radius: 50%; cursor: pointer; &.active { border-color: var(--c-primary); } } }
-
-.switch-label { display: inline-flex; align-items: center; gap: 0.5em; cursor: pointer; .track { position: relative; width: 40px; height: 22px; border-radius: 11px; background: var(--c-border); .thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; } } input:checked + .track { background: var(--c-primary); .thumb { transform: translateX(18px); } } .txt { font-size: 0.85em; color: var(--c-text-2); } }
 
 .download-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4em; padding: 0.6em 1.5em; border-radius: 0.5em; background: var(--c-primary); color: #fff; font-size: 0.95em; cursor: pointer; border: none; &:hover { opacity: 0.9; } &:disabled { opacity: 0.5; cursor: not-allowed; } }
 </style>
