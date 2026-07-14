@@ -1,7 +1,6 @@
 <script setup lang="ts">
 defineEmits<{ back: [] }>()
 
-const inputEl = ref<HTMLInputElement>()
 const canvasEl = ref<HTMLCanvasElement>()
 const originalUrl = ref('')
 const resultUrl = ref('')
@@ -44,10 +43,7 @@ function handleFile(e: Event) {
 function redraw() {
 	if (!originalUrl.value) return
 	const img = new Image()
-	img.onload = () => {
-		_img = img
-		applyWatermark()
-	}
+	img.onload = () => { _img = img; applyWatermark() }
 	img.src = originalUrl.value
 }
 
@@ -59,33 +55,20 @@ function applyWatermark() {
 	const ctx = canvas.getContext('2d')!
 	ctx.drawImage(_img, 0, 0)
 
-	if (!watermarkText.value) {
-		resultUrl.value = originalUrl.value
-		return
-	}
+	if (!watermarkText.value) { resultUrl.value = originalUrl.value; return }
 
-	const w = canvas.width
-	const h = canvas.height
-	const weight = bold.value ? 'bold ' : ''
-	ctx.font = `${weight}${fontSize.value}px sans-serif`
+	const w = canvas.width; const h = canvas.height
+	ctx.font = `${bold.value ? 'bold ' : ''}${fontSize.value}px sans-serif`
 	ctx.fillStyle = color.value + Math.round(opacity.value * 255).toString(16).padStart(2, '0')
-	ctx.textAlign = 'center'
-	ctx.textBaseline = 'middle'
-	ctx.save()
+	ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.save()
 
 	if (position.value === 'tile') {
 		const rad = (rotation.value * Math.PI) / 180
 		const spacing = Math.max(tileSpacing.value, fontSize.value * 2)
-		const cols = Math.ceil(w / spacing) + 2
-		const rows = Math.ceil(h / spacing) + 2
-		for (let row = -1; row < rows; row++) {
-			for (let col = -1; col < cols; col++) {
-				ctx.save()
-				ctx.translate(col * spacing + spacing / 2, row * spacing + spacing / 2)
-				ctx.rotate(rad)
-				ctx.fillText(watermarkText.value, 0, 0)
-				ctx.restore()
-			}
+		const cols = Math.ceil(w / spacing) + 2; const rows = Math.ceil(h / spacing) + 2
+		for (let r = -1; r < rows; r++) for (let c = -1; c < cols; c++) {
+			ctx.save(); ctx.translate(c * spacing + spacing / 2, r * spacing + spacing / 2); ctx.rotate(rad)
+			ctx.fillText(watermarkText.value, 0, 0); ctx.restore()
 		}
 	} else {
 		const rad = (rotation.value * Math.PI) / 180
@@ -98,8 +81,7 @@ function applyWatermark() {
 			case 'br': x = w - pad; y = h - pad - fontSize.value / 2; break
 			default: x = w / 2; y = h / 2
 		}
-		ctx.translate(x, y)
-		ctx.rotate(rad)
+		ctx.translate(x, y); ctx.rotate(rad)
 		ctx.fillText(watermarkText.value, 0, 0)
 	}
 	ctx.restore()
@@ -107,43 +89,32 @@ function applyWatermark() {
 }
 
 function download() {
-	if (!canvasEl.value) return
-	downloading.value = true
+	if (!canvasEl.value) return; downloading.value = true
 	const mime = exportMime.value
-	const quality = mime === 'image/png' ? undefined : 0.9
 	canvasEl.value.toBlob((blob) => {
 		if (!blob) return
-		const a = document.createElement('a')
-		a.href = URL.createObjectURL(blob)
-		a.download = `watermarked${exportExt.value}`
-		a.click()
-		downloading.value = false
-	}, mime, quality)
+		const a = document.createElement('a'); a.href = URL.createObjectURL(blob)
+		a.download = `watermarked${exportExt.value}`; a.click(); downloading.value = false
+	}, mime, mime === 'image/png' ? undefined : 0.9)
 }
 
-watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSpacing], () => {
-	if (originalUrl.value) applyWatermark()
-})
+watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSpacing], () => { if (originalUrl.value) applyWatermark() })
 </script>
 
 <template>
 <div class="tool-page">
-	<div class="tool-topbar">
-		<button class="back-link" @click="$emit('back')">
-			<Icon name="tabler:arrow-left" /><span>工具箱</span>
-		</button>
-	</div>
+	<div class="tool-topbar"><button class="back-link" @click="$emit('back')"><Icon name="tabler:arrow-left" /><span>工具箱</span></button></div>
 	<h1>图片水印</h1>
-	<p class="subtitle">添加文字水印，支持平铺模式。纯浏览器端处理，图片不会上传。</p>
+	<p class="subtitle">添加文字水印，支持平铺模式。纯浏览器端处理，不涉及上传。</p>
 
-	<div class="upload-zone" @click="inputEl?.click()">
+	<label class="upload-zone">
 		<img v-if="resultUrl" :src="resultUrl" class="preview-img" alt="">
 		<template v-else>
 			<Icon name="tabler:cloud-upload" class="upload-icon" />
 			<p class="upload-hint">点击上传图片</p>
 		</template>
-	</div>
-	<input ref="inputEl" type="file" accept="image/*" hidden @change="handleFile">
+		<input type="file" accept="image/*" hidden @change="handleFile">
+	</label>
 	<canvas ref="canvasEl" style="display:none" />
 
 	<div class="controls" v-if="originalUrl">
@@ -153,9 +124,7 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 		</div>
 		<div class="control-row">
 			<label>水印模式</label>
-			<div class="chips">
-				<button v-for="opt in positionOptions" :key="opt.value" :class="{ active: position === opt.value }" @click="position = opt.value">{{ opt.label }}</button>
-			</div>
+			<div class="chips"><button v-for="opt in positionOptions" :key="opt.value" :class="{ active: position === opt.value }" @click="position = opt.value">{{ opt.label }}</button></div>
 		</div>
 		<div class="control-row">
 			<label>字号：{{ fontSize }}px</label>
@@ -175,11 +144,7 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 		</div>
 		<div class="control-row">
 			<label>字体加粗</label>
-			<label class="switch-label">
-				<input type="checkbox" v-model="bold" hidden>
-				<span class="switch-track"><span class="switch-thumb" /></span>
-				<span>{{ bold ? '开' : '关' }}</span>
-			</label>
+			<label class="switch-label"><input type="checkbox" v-model="bold" hidden><span class="switch-track"><span class="switch-thumb" /></span><span>{{ bold ? '开' : '关' }}</span></label>
 		</div>
 		<div class="control-row">
 			<label>颜色</label>
@@ -190,14 +155,9 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 		</div>
 		<div class="control-row">
 			<label>导出格式</label>
-			<div class="chips">
-				<button v-for="f in [{ v: 'image/png' as const, l: 'PNG' }, { v: 'image/jpeg' as const, l: 'JPEG' }, { v: 'image/webp' as const, l: 'WebP' }]" :key="f.v" :class="{ active: exportFormat === f.v }" @click="exportFormat = f.v">{{ f.l }}</button>
-			</div>
+			<div class="chips"><button v-for="f in [{ v: 'image/png' as const, l: 'PNG' }, { v: 'image/jpeg' as const, l: 'JPEG' }, { v: 'image/webp' as const, l: 'WebP' }]" :key="f.v" :class="{ active: exportFormat === f.v }" @click="exportFormat = f.v">{{ f.l }}</button></div>
 		</div>
-		<button class="download-btn" :disabled="!resultUrl || downloading" @click="download">
-			<Icon name="tabler:download" />
-			<span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span>
-		</button>
+		<button class="download-btn" :disabled="!resultUrl || downloading" @click="download"><Icon name="tabler:download" /><span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span></button>
 	</div>
 </div>
 </template>
