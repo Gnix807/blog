@@ -31,6 +31,13 @@ function openTool(name: string) {
 function back() {
 	activeTool.value = null
 }
+
+// watermark test
+const wmFile = ref<HTMLInputElement>()
+function onWmFileChange() {
+	const file = wmFile.value?.files?.[0]
+	alert('test: ' + (file?.name ?? 'none'))
+}
 </script>
 
 <template>
@@ -79,8 +86,11 @@ function back() {
 		<Icon name="tabler:arrow-left" /><span>工具箱</span>
 	</button>
 	<h1>图片水印</h1>
-	<p>选中文件后看是否弹出 alert</p>
-	<input type="file" @change="(e) => { const el = e.target; if (el) alert('ok: ' + el.files[0]?.name) }">
+	<p>用 label 包裹试试</p>
+	<label style="display:inline-block;padding:1em;border:2px dashed #999;cursor:pointer;border-radius:8px">
+		点击选择图片
+		<input ref="wmFile" type="file" accept="image/*" hidden @change="onWmFileChange">
+	</label>
 </div>
 </template>
 
