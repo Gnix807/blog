@@ -16,7 +16,7 @@ function format() {
 	}
 }
 
-function compact() {
+function doCompact() {
 	error.value = ''
 	if (!input.value.trim()) { output.value = ''; return }
 	try {
@@ -27,7 +27,7 @@ function compact() {
 	}
 }
 
-function sort() {
+function doSort() {
 	error.value = ''
 	if (!input.value.trim()) { output.value = ''; return }
 	try {
@@ -57,8 +57,8 @@ watchEffect(() => { if (input.value) format() })
 	<p style="margin:0.3em 0 1rem;font-size:0.9em;color:var(--c-text-2)">纯浏览器端，数据不上传。</p>
 	<div style="display:flex;flex-wrap:wrap;gap:0.3em;margin-bottom:0.8rem">
 		<button @click="format" style="padding:0.4em 1em;border:1px solid var(--c-border);border-radius:0.4em;background:var(--c-primary-soft);color:var(--c-primary);cursor:pointer">格式化</button>
-		<button @click="compact" style="padding:0.4em 1em;border:1px solid var(--c-border);border-radius:0.4em;cursor:pointer;color:var(--c-text-2);background:transparent">压缩</button>
-		<button @click="sort" style="padding:0.4em 1em;border:1px solid var(--c-border);border-radius:0.4em;cursor:pointer;color:var(--c-text-2);background:transparent">按 key 排序</button>
+		<button @click="doCompact" style="padding:0.4em 1em;border:1px solid var(--c-border);border-radius:0.4em;cursor:pointer;color:var(--c-text-2);background:transparent">压缩</button>
+		<button @click="doSort" style="padding:0.4em 1em;border:1px solid var(--c-border);border-radius:0.4em;cursor:pointer;color:var(--c-text-2);background:transparent">按 key 排序</button>
 		<select v-model.number="indent" style="padding:0.4em;border:1px solid var(--c-border);border-radius:0.4em;background:var(--c-bg);color:var(--c-text);font-size:0.9em">
 			<option :value="2">2 空格</option>
 			<option :value="4">4 空格</option>
