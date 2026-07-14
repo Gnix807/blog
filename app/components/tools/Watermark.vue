@@ -134,6 +134,19 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 				<button v-for="c in ['#ffffff','#000000','#ef4444']" :key="c" @click="color = c" :style="{ width:'28px', height:'28px', border:`2px solid ${color===c?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'50%', cursor:'pointer', background:c }" />
 			</div>
 		</div>
+
+		<div style="margin-top:0.8rem">
+			<div style="font-size:0.85em;color:var(--c-text-2);margin-bottom:0.3em">导出格式</div>
+			<div style="display:flex;gap:0.3em">
+				<button @click="exportFormat = 'image/png'" :style="{ padding:'0.3em 0.8em', border:`1px solid ${exportFormat==='image/png'?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'0.4em', cursor:'pointer', fontSize:'0.9em', background: exportFormat==='image/png'?'var(--c-primary-soft)':'transparent', color: exportFormat==='image/png'?'var(--c-primary)':'var(--c-text-2)' }">PNG</button>
+				<button @click="exportFormat = 'image/jpeg'" :style="{ padding:'0.3em 0.8em', border:`1px solid ${exportFormat==='image/jpeg'?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'0.4em', cursor:'pointer', fontSize:'0.9em', background: exportFormat==='image/jpeg'?'var(--c-primary-soft)':'transparent', color: exportFormat==='image/jpeg'?'var(--c-primary)':'var(--c-text-2)' }">JPEG</button>
+				<button @click="exportFormat = 'image/webp'" :style="{ padding:'0.3em 0.8em', border:`1px solid ${exportFormat==='image/webp'?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'0.4em', cursor:'pointer', fontSize:'0.9em', background: exportFormat==='image/webp'?'var(--c-primary-soft)':'transparent', color: exportFormat==='image/webp'?'var(--c-primary)':'var(--c-text-2)' }">WebP</button>
+			</div>
+		</div>
+
+		<button @click="download" :disabled="!resultUrl || downloading" style="display:inline-flex;align-items:center;justify-content:center;gap:0.4em;padding:0.6em 1.5em;border-radius:0.5em;background:var(--c-primary);color:#fff;font-size:0.95em;margin-top:0.5em;cursor:pointer;border:none">
+			<Icon name="tabler:download" /><span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span>
+		</button>
 	</div>
 </div>
 </template>
