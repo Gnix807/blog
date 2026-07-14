@@ -127,6 +127,11 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 			<button @click="bold = !bold" :style="{ padding:'0.3em 0.8em', border:'1px solid var(--c-border)', borderRadius:'0.4em', cursor:'pointer', background: bold ? 'var(--c-primary-soft)' : 'transparent', color: bold ? 'var(--c-primary)' : 'var(--c-text-2)' }">{{ bold ? '开' : '关' }}</button>
 		</div>
 
+		<div v-if="position === 'tile'" style="margin-top:0.8rem">
+			<div style="font-size:0.85em;color:var(--c-text-2)">平铺间距：{{ tileSpacing }}px</div>
+			<input type="range" min="80" max="500" step="10" v-model.number="tileSpacing" style="width:100%;margin-top:0.2em">
+		</div>
+
 		<div style="margin-top:0.8rem">
 			<div style="font-size:0.85em;color:var(--c-text-2);margin-bottom:0.3em">颜色</div>
 			<div style="display:flex;align-items:center;gap:0.4em">
