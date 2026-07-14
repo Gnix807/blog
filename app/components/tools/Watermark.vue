@@ -143,10 +143,6 @@ watch([watermarkText, fontSize, opacity, position, color, rotation, bold, tileSp
 				<button @click="exportFormat = 'image/webp'" :style="{ padding:'0.3em 0.8em', border:`1px solid ${exportFormat==='image/webp'?'var(--c-primary)':'var(--c-border)'}`, borderRadius:'0.4em', cursor:'pointer', fontSize:'0.9em', background: exportFormat==='image/webp'?'var(--c-primary-soft)':'transparent', color: exportFormat==='image/webp'?'var(--c-primary)':'var(--c-text-2)' }">WebP</button>
 			</div>
 		</div>
-
-		<button @click="download" :disabled="!resultUrl || downloading" style="display:inline-flex;align-items:center;justify-content:center;gap:0.4em;padding:0.6em 1.5em;border-radius:0.5em;background:var(--c-primary);color:#fff;font-size:0.95em;margin-top:0.5em;cursor:pointer;border:none">
-			<Icon name="tabler:download" /><span>{{ downloading ? '下载中...' : `下载 ${exportExt.value.replace('.','').toUpperCase()}` }}</span>
-		</button>
 	</div>
 </div>
 </template>
